@@ -14,29 +14,48 @@ import {
 import { MonoText } from '../components/StyledText';
 import { RNCamera } from 'react-native-camera';
 import { Camera } from 'expo-camera';
+import * as FileSystem from 'expo-file-system';
+import * as ImageManipulator from 'expo-image-manipulator';
+
 
 const url = "https://api.ocr.space/parse/image"
 async function apiCall(path, file) {
     console.log("apiCall", path);
     let formData = new FormData();
-    formData.append('file', file);
+    console.log("this is the new uri", relative_image_path)
+    const manipResult = await ImageManipulator.manipulateAsync(
+          file["uri"],
+          [],
+          { compress: 0, }
+        );
+    console.log(manipResult); 
+
+    const base64 = await FileSystem.readAsStringAsync(manipResult.uri, { encoding: 'base64' });
+    console.log("heres your image in base64", base64)
+
+    const base64string = "data:image/jpeg;base64," + base64 
+    formData.append('base64Image', base64string);
     formData.append('apikey','7e5dcf14b188957');
     formData.append('language', 'eng');
+    formData.append('filetype', 'image/jpg')
     formData.append('detectOrientation', true)
     formData.append('isOverlayRequired', true)
     formData.append('isTable', true)
     formData.append('scale', true)
+    console.log(formData)
     const response = await fetch(url + path, {
         method: 'POST',
         mode: 'cors',
-        // headers: new Headers({ 'Content-Type': 'application/json' }),
         body: formData
     })
     if (!response.ok) {
+        console.log("something bad happened x( ")
         console.log(response.json())
         throw await response.json()
     }
-    console.log("got a response!")
+    else {
+      console.log("got a response!")
+    }
     return await response.json()
     
 }
@@ -46,66 +65,66 @@ const upload = async (file) => {
     console.log(file)
     const resp = await apiCall("", file)
     console.log(resp)
-    const lines = resp.ParsedResults[0].TextOverlay.Lines
-    var r = /^\$?[0-9]+[.,]?[0-9]?[0-9]?$/;
-    // var r = /^\$?\d+(,\d{3})*\.?[0-9]?[0-9]?$/
-    const rowY = []
-    const remainingLines = []
+    // const lines = resp.ParsedResults[0].TextOverlay.Lines
+    // var r = /^\$?[0-9]+[.,]?[0-9]?[0-9]?$/;
+    // // var r = /^\$?\d+(,\d{3})*\.?[0-9]?[0-9]?$/
+    // const rowY = []
+    // const remainingLines = []
 
-    for (const el of lines){
-        let isDollar = r.test(el.LineText)
-        console.log(el.LineText, isDollar)
-        if (isDollar) {
-            rowY.push(el.MinTop)
-        } else {
-            remainingLines.push(el)
-        }
-    }
+    // for (const el of lines){
+    //     let isDollar = r.test(el.LineText)
+    //     console.log(el.LineText, isDollar)
+    //     if (isDollar) {
+    //         rowY.push(el.MinTop)
+    //     } else {
+    //         remainingLines.push(el)
+    //     }
+    // }
 
-    const indices = []
-    for (const goal of rowY) {
-        const res = remainingLines.reduce(function({prev, idx}, curr, i) {
-            return (Math.abs(curr.MinTop - goal) < Math.abs(prev.MinTop - goal) ? {prev: curr, idx: i} : {prev, idx});
-        }, {prev: remainingLines[0], idx:0});
-        console.log(res)
-        indices.push(res.idx)
-    }
+    // const indices = []
+    // for (const goal of rowY) {
+    //     const res = remainingLines.reduce(function({prev, idx}, curr, i) {
+    //         return (Math.abs(curr.MinTop - goal) < Math.abs(prev.MinTop - goal) ? {prev: curr, idx: i} : {prev, idx});
+    //     }, {prev: remainingLines[0], idx:0});
+    //     console.log(res)
+    //     indices.push(res.idx)
+    // }
     
-    const items = []
-    for (let i=0; i < indices.length - 1; i++) {
-        const start = indices[i]
-        const end = indices[i+1]
-        const name = remainingLines[start].LineText
-        let item;
-        if (end - start > 1){
-            let descriptor = remainingLines[start + 1].LineText
-            let unitStrings = descriptor.replace(/\s+/g, '').split('kg')
-            if (unitStrings.length > 1) {
-                item = {name, quantity: unitStrings[0], unit: 'kg'}
-            } else {
-                unitStrings = descriptor.replace(/\s+/g, '').split('lb')
-                if (unitStrings.length > 1) {
-                    item = {name, quantity: unitStrings[0], unit: 'lb'}
-                }
-            }
-        }
-        if (item) { items.push(item)}
-        else {
-            items.push({name, quantity: 1.0, unit: 'ea'})
-        }
-        // items.push(remainingLines.slice(start, end))
-    }
-    console.log(items)
-    const response = await fetch("http://localhost:8000/query_receipt",
-        {
-            method: 'POST',
-            mode: 'cors',
-            headers: new Headers({ 'Content-Type': 'application/json' }),
-            body: JSON.stringify({
-                receipt: items
-            })
-    })
-    console.log(await response.json())
+    // const items = []
+    // for (let i=0; i < indices.length - 1; i++) {
+    //     const start = indices[i]
+    //     const end = indices[i+1]
+    //     const name = remainingLines[start].LineText
+    //     let item;
+    //     if (end - start > 1){
+    //         let descriptor = remainingLines[start + 1].LineText
+    //         let unitStrings = descriptor.replace(/\s+/g, '').split('kg')
+    //         if (unitStrings.length > 1) {
+    //             item = {name, quantity: unitStrings[0], unit: 'kg'}
+    //         } else {
+    //             unitStrings = descriptor.replace(/\s+/g, '').split('lb')
+    //             if (unitStrings.length > 1) {
+    //                 item = {name, quantity: unitStrings[0], unit: 'lb'}
+    //             }
+    //         }
+    //     }
+    //     if (item) { items.push(item)}
+    //     else {
+    //         items.push({name, quantity: 1.0, unit: 'ea'})
+    //     }
+    //     // items.push(remainingLines.slice(start, end))
+    // }
+    // console.log(items)
+    // const response = await fetch("http://localhost:8000/query_receipt",
+    //     {
+    //         method: 'POST',
+    //         mode: 'cors',
+    //         headers: new Headers({ 'Content-Type': 'application/json' }),
+    //         body: JSON.stringify({
+    //             receipt: items
+    //         })
+    // })
+    // console.log(await response.json())
 };
 
 
@@ -170,6 +189,7 @@ export default function HomeScreen() {
                     var file = {
                         uri: photo['uri'],
                         type: 'image/jpg',
+                        name: 'photo.jpg',
                     };
                     await upload(file); 
                   } catch (error) {
