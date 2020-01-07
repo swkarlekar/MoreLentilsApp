@@ -71,7 +71,7 @@ const upload = async (file) => {
     const remainingLines = []
 
     for (const el of lines){
-        let isDollar = r.test(el.LineText)
+        let isDollar = el.LineText.split(" ").any(word => r.test(word))
         console.log(el.LineText, isDollar)
         if (isDollar) {
             rowY.push(el.MinTop)
@@ -114,16 +114,17 @@ const upload = async (file) => {
         // items.push(remainingLines.slice(start, end))
     }
     console.log(items)
-    // const response = await fetch("http://localhost:8000/query_receipt",
-    //     {
-    //         method: 'POST',
-    //         mode: 'cors',
-    //         headers: new Headers({ 'Content-Type': 'application/json' }),
-    //         body: JSON.stringify({
-    //             receipt: items
-    //         })
-    // })
-    // console.log(await response.json())
+    const server_addr = "http://bf7d6735.ngrok.io";
+    const response = await fetch(server_addr + "/query_receipt",
+        {
+            method: 'POST',
+            mode: 'cors',
+            headers: new Headers({ 'Content-Type': 'application/json' }),
+            body: JSON.stringify({
+                receipt: items
+            })
+    })
+    console.log(await response.json())
 };
 
 
