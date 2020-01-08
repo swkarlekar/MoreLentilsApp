@@ -65,49 +65,75 @@ const upload = async (file) => {
     const resp = await apiCall("", file)
     console.log(resp)
     const lines = resp.ParsedResults[0].TextOverlay.Lines
-    var r = /^\$?[0-9]+[.,]?[0-9]?[0-9]?$/;
+    var r = /^\$?[0-9]+[.,][0-9]?[0-9]?$/;
     // var r = /^\$?\d+(,\d{3})*\.?[0-9]?[0-9]?$/
     const rowY = []
     const remainingLines = []
 
     for (const el of lines){
-        let isDollar = el.LineText.split(" ").any(word => r.test(word))
-        console.log(el.LineText, isDollar)
+        let isDollar = el.LineText.split(" ").some(word => r.test(word)) && !(el.LineText.includes("lb") || el.LineText.includes("kg") || el.LineText.includes("@"))
+        // console.log(el.LineText.split(" "), isDollar)
         if (isDollar) {
-            rowY.push(el.MinTop)
+            rowY.push(el)
         } else {
             remainingLines.push(el)
         }
     }
-
-    const indices = []
-    for (const goal of rowY) {
-        const res = remainingLines.reduce(function({prev, idx}, curr, i) {
-            return (Math.abs(curr.MinTop - goal) < Math.abs(prev.MinTop - goal) ? {prev: curr, idx: i} : {prev, idx});
-        }, {prev: remainingLines[0], idx:0});
-        console.log(res)
-        indices.push(res.idx)
-    }
+    function closest(arr, goal) {
+        return arr.reduce(function({prev, idx}, curr, i) {
+        return (Math.abs(curr.MinTop - goal) < Math.abs(prev.MinTop - goal) ? {prev: curr, idx: i} : {prev, idx});
+    }, {prev: arr[0], idx:0})
+    };
     
-    const items = []
-    for (let i=0; i < indices.length - 1; i++) {
-        const start = indices[i]
-        const end = indices[i+1]
-        const name = remainingLines[start].LineText
-        let item;
-        if (end - start > 1){
-            let descriptor = remainingLines[start + 1].LineText
-            let unitStrings = descriptor.replace(/\s+/g, '').split('kg')
-            if (unitStrings.length > 1) {
-                item = {name, quantity: unitStrings[0], unit: 'kg'}
+    console.log("rowY", rowY)
+    let start = rowY.map(el=> el.MinTop).reduce((a,b) => Math.min(a,b))
+    let end = rowY.map(el => el.MinTop).reduce((a,b) => Math.max(a,b))
+    remainingLines.sort(function (a, b) {
+        return a.MinTop - b.MinTop;
+    });
+    
+    // group by line
+    const textByLines = []
+    let prev;
+    let curr = []
+    let epsilon = 10;
+    for (const el of remainingLines) {
+        if (el.MinTop > (start - epsilon) && el.MinTop < (end + epsilon)){
+            if (!prev) { prev = el}
+            
+            if (Math.abs(el.MinTop - prev.MinTop) > epsilon) {
+                textByLines.push(curr)
+                curr = [el]
             } else {
-                unitStrings = descriptor.replace(/\s+/g, '').split('lb')
-                if (unitStrings.length > 1) {
-                    item = {name, quantity: unitStrings[0], unit: 'lb'}
-                }
+                curr.push(el)
+            }
+            prev = el
+        }
+    }
+    console.log("tbylines", textByLines)
+    const items = []
+    let total;
+    for (let i=0; i < textByLines.length; i++) {
+        const name = textByLines[i].map(el => el.LineText).join(" ").toLowerCase()
+        if (name.includes("total")) {
+            total = closest(rowY, textByLines[i][0].MinTop).LineText
+            console.log(name, total)
+        }
+        let item;
+        let descriptor = i + 1 < textByLines.length ? textByLines[i + 1].map(el => el.LineText).join(" ") : ""
+        let unitStrings = descriptor.replace(/\s+/g, '').split('kg')
+        if (unitStrings.length > 1) {
+            item = {name, quantity: unitStrings[0], unit: 'kg'}
+        } else {
+            unitStrings = descriptor.replace(/\s+/g, '').split('lb')
+            if (unitStrings.length > 1) {
+                item = {name, quantity: unitStrings[0], unit: 'lb'}
             }
         }
-        if (item) { items.push(item)}
+        if (item) { 
+            items.push(item)
+            i += 1
+        }
         else {
             items.push({name, quantity: 1.0, unit: 'ea'})
         }
@@ -121,7 +147,8 @@ const upload = async (file) => {
             mode: 'cors',
             headers: new Headers({ 'Content-Type': 'application/json' }),
             body: JSON.stringify({
-                receipt: items
+                receipt: items,
+                total
             })
     })
     console.log(await response.json())
