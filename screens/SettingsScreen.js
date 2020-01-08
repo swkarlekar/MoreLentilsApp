@@ -12,6 +12,7 @@ import { NavigationScreenProps } from 'react-navigation';
 
 import CarbonBreakdownPieChart from '../components/CarbonBreakdownPieChart'
 import FootprintProgressChart from '../components/FootprintProgressChart'
+import ItemizedCarbonReceipt from '../components/ItemizedCarbonReceipt'
 
 const screenHeight = Dimensions.get("window").height;
 const screenWidth = Dimensions.get("window").width;
@@ -60,12 +61,21 @@ let thisMonthCarbonFootprints = [
     {'total': 14.69642, 'date': 9},
 ]
 
+let mockItemizedReceipt = [{'footprint': 0.87, 'goodness': 0.9275, 'name': 'potatoes'},
+              {'footprint': 12.2472, 'goodness': 0.325, 'name': 'beef'},
+              {'footprint': 1.0, 'goodness': 0.95, 'name': 'tofu'},
+              {'footprint': 3.0618, 'goodness': 0.325, 'name': 'ground beef'},
+              {'footprint': 7.22, 'goodness': 0.9525, 'name': 'milk'}]
 
 const server_addr = "http://4307a77d.ngrok.io";
 
 export default class SettingsScreen extends Component {
     state = {
         'tripSummary': mockTripSummary,
+        'year': 2020,
+        'month': 1,
+        'day': 3,
+        'itemized': mockItemizedReceipt
     }
 
     updateToTripId = async (tripId) => {
@@ -82,6 +92,12 @@ export default class SettingsScreen extends Component {
         let summary = await response.json()
 
         this.state.tripSummary = summary.breakdown;
+        this.state.year = summary.year;
+        this.state.month = summary.month;
+        this.state.day = summary.date;
+        this.state.itemized = summary.itemized;
+
+        console.log(this.state);
 
         this.setState(this.state);
 
@@ -115,21 +131,36 @@ export default class SettingsScreen extends Component {
                 lastMonthCarbonFootprints={lastMonthCarbonFootprints}
                 thisMonthCarbonFootprints={thisMonthCarbonFootprints}
             />
-            <Text>CO2 Footprint Breakdown (2020/01/02):</Text>
-            <CarbonBreakdownPieChart
-                    breakdown={this.state.tripSummary}
-                    width={screenWidth}
-                    height={0.3 * screenHeight}
-                    backgroundColor="transparent"
-                />
-            <Text>Itemized Receipt:</Text>
-            <View style={{flex: 1, flexDirection: 'row'}}>
-                <TouchableOpacity onPress={this.showBreakdownFromLastTrip}>
-                <Text> Last Receipt </Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={this.showBreakdownFromNextTrip}>
-                <Text> Next Receipt </Text>
-                </TouchableOpacity>
+            <View style={{flex: 1, flexDirection:'row'}}>
+                <View style={{flex: 1}}>
+                    <TouchableOpacity onPress={this.showBreakdownFromLastTrip}>
+                    <Text> 	⟨ </Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={{flex: 18}}>
+                    <Text>
+                    CO2 Footprint Breakdown
+                    ({this.state.year + "/" + this.state.month + "/" + this.state.day}):
+                    </Text>
+                    <CarbonBreakdownPieChart
+                            breakdown={this.state.tripSummary}
+                            width={screenWidth}
+                            height={0.3 * screenHeight}
+                            backgroundColor="transparent"
+                            paddingLeft={0}
+                        />
+                    <Text>Itemized Receipt:</Text>
+                    <ItemizedCarbonReceipt
+                        itemized={this.state.itemized}
+                        fontSize={16}
+                        lineHeight={16}
+                    />
+                </View>
+                <View style={{flex:1}}>
+                    <TouchableOpacity onPress={this.showBreakdownFromNextTrip}>
+                    <Text> ⟩ </Text>
+                    </TouchableOpacity>
+                </View>
             </View>
             </ScrollView>
         );

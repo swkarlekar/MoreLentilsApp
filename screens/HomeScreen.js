@@ -142,7 +142,7 @@ const upload = async (file) => {
                 receipt: items,
                 total
             })
-    })
+        })
 
     return await response.json(); 
   }

@@ -67,7 +67,7 @@ export default class CarbonBreakdownPieChart extends Component {
                 chartConfig={chartConfig}
                 accessor="footprint"
                 backgroundColor={this.props.backgroundColor}
-                paddingLeft={0.02 * screenWidth}
+                paddingLeft={this.props.paddingLeft}
             />
         );
     }

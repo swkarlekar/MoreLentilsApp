@@ -1,13 +1,13 @@
-import React from 'react';
+import React, { Component } from 'react';
 import {
     ScrollView, StyleSheet, FlatList, Text, View, Dimensions
 } from 'react-native';
-import styled from 'styled-components';
 import { PieChart } from 'react-native-chart-kit';
 import { NavigationScreenProps } from 'react-navigation';
 
 
 import CarbonBreakdownPieChart from '../components/CarbonBreakdownPieChart'
+import ItemizedCarbonReceipt from '../components/ItemizedCarbonReceipt'
 
 const toEnglishCase = (str) => {
    var splitStr = str.toLowerCase().split(' ');
@@ -108,74 +108,39 @@ let serverReply = serverReply_1;
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
-const getGreenToRed = (percent) => {
-    console.log(percent);
-    let r = percent<50 ? 255 : Math.floor(255-(percent*2-100)*255/100);
-    let g = percent>50 ? 255 : Math.floor((percent*2)*255/100);
-    let rv= 'rgb('+r+','+g+',0)';
-    console.log(rv);
-    return rv;
-};
-
-const ReceiptList = styled.FlatList`
-    position: absolute;
-    top: 40%;
-    left: 5%;
-`;
-
-export default function LinksScreen() {
-
-    return (
-        <ScrollView>
-        <View style={styles.Container}>
-            <CarbonBreakdownPieChart
-                breakdown={serverReply.breakdown}
-                width={screenWidth}
-                height={0.4 * screenHeight}
-                backgroundColor="transparent"
-            />
-        </View>
-            <View style={styles.ReceiptItem}>
-                <View style={styles.TextSpan}>
-                    <Text numberOfLines={1} style={styles.BoldText}>
-                        Carbon Footprint (kg of CO2-e)
-                    </Text>
+export default class LinksScreen extends Component {
+    render() {
+        return (
+            <ScrollView>
+                <View style={styles.Container}>
+                    <CarbonBreakdownPieChart
+                        breakdown={serverReply.breakdown}
+                        width={screenWidth}
+                        height={0.4 * screenHeight}
+                        backgroundColor="transparent"
+                        paddingLeft={0.02 * screenWidth}
+                    />
                 </View>
-                <View style={styles.rightJustified}>
-                    <Text style={styles.BoldTextR}>
-                        {serverReply.total_carbon_footprint.toFixed(1)}
-                    </Text>
-                </View>
-            </View>
-            <FlatList styles={{
-                position: 'absolute',
-                top: '40%',
-                left: '5%',
-            }}
-            data={serverReply.itemized}
-            renderItem={({item}) => 
                 <View style={styles.ReceiptItem}>
                     <View style={styles.TextSpan}>
-                        <Text style={styles.Text}>
-                            {toEnglishCase(item.name)}
+                        <Text numberOfLines={1} style={styles.BoldText}>
+                            Carbon Footprint (kg of CO2-e)
                         </Text>
                     </View>
                     <View style={styles.rightJustified}>
-                        <Text style={{
-                            color:getGreenToRed(item.goodness * 100),
-                            fontStyle: 'normal',
-                            fontWeight: 'normal',
-                            fontSize: 18,
-                            lineHeight: 18,
-                        }}>
-                            {item.footprint.toFixed(1)}
+                        <Text style={styles.BoldTextR}>
+                            {serverReply.total_carbon_footprint.toFixed(1)}
                         </Text>
                     </View>
                 </View>
-            }
-            />
-        </ScrollView>
-    );
+                <ItemizedCarbonReceipt
+                    itemized={serverReply.itemized}
+                    fontSize={18}
+                    lineHeight={18}
+                />
+            </ScrollView>
+        );
+    }
 }
 
 const styles = StyleSheet.create({
@@ -184,12 +149,24 @@ const styles = StyleSheet.create({
         paddingTop: 15,
         backgroundColor: '#5f5f5f',
     },
-    rightJustified: {
-        flex: 1,
-        flexDirection: 'row',
-        justifyContent: 'flex-end',
-        alignItems: 'center',
+    BoldText: {
+        fontStyle: 'normal',
+        fontWeight: 'bold',
+        fontSize: 20,
+        lineHeight: 20,
         color: '#5f5f5f',
+    },
+    BoldTextR: {
+        textAlign: 'right',
+        fontStyle: 'normal',
+        fontWeight: 'bold',
+        fontSize: 20,
+        lineHeight: 20,
+        color: '#5f5f5f',
+    },
+    Container : {
+        paddingLeft: 0.05 * screenWidth,
+        paddingRight: 0.05 * screenHeight,
     },
     ReceiptItem: {
         height: 30,
@@ -214,24 +191,12 @@ const styles = StyleSheet.create({
         lineHeight: 18,
         color: '#5f5f5f',
     },
-    BoldText: {
-        fontStyle: 'normal',
-        fontWeight: 'bold',
-        fontSize: 20,
-        lineHeight: 20,
-        color: '#5f5f5f',
-    },
-    BoldTextR: {
-        textAlign: 'right',
-        fontStyle: 'normal',
-        fontWeight: 'bold',
-        fontSize: 20,
-        lineHeight: 20,
+    rightJustified: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        alignItems: 'center',
         color: '#5f5f5f',
     },
 
-    Container : {
-        paddingLeft: 0.05 * screenWidth,
-        paddingRight: 0.05 * screenHeight,
-    }
 });
