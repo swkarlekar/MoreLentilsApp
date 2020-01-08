@@ -246,19 +246,6 @@ export default function HomeScreen(props) {
               console.log("whats up")
               setSpinner(false)
 
-              Alert.alert(
-              'Good news!',
-              'I took a picture!',
-              [
-                {
-                  text: 'Close',
-                  onPress: () => console.log('Close Pressed'),
-                  style: 'cancel',
-                },
-              ],
-              { cancelable: false }
-            );
-
             }}>
             <Text style={{ fontSize: 18, marginBottom: 10, color: 'white' }}> Snap </Text>
           </TouchableOpacity>
