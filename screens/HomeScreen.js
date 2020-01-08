@@ -18,11 +18,12 @@ import { Camera } from 'expo-camera';
 import * as FileSystem from 'expo-file-system';
 import * as ImageManipulator from 'expo-image-manipulator';
 import { NavigationScreenProps } from 'react-navigation';
-
+import LinksScreen from './LinksScreen';
 
 
 const url = "https://api.ocr.space/parse/image"
 async function apiCall(path, file) {
+  try{
     console.log("apiCall", path);
     let formData = new FormData();
     const manipResult = await ImageManipulator.manipulateAsync(
@@ -51,19 +52,23 @@ async function apiCall(path, file) {
         body: formData
     })
     if (!response.ok) {
-        // console.log("something bad happened x( ")
-        // console.log(response.json())
+        console.log("something bad happened x( ")
+        console.log(response.json())
         throw await response.json()
     }
     return await response.json()
+  }
+  catch (error) {
+    console.log(error)
+  } 
     
 }
 
 // This will upload the file after having read it
 const upload = async (file) => {
-    // console.log(file)
+  try{
     const resp = await apiCall("", file)
-    // console.log(resp)
+    console.log(resp.ParsedResults[0].ParsedText)
     const lines = resp.ParsedResults[0].TextOverlay.Lines
     var r = /^\$?[0-9]+[.,][0-9]?[0-9]?$/;
     // var r = /^\$?\d+(,\d{3})*\.?[0-9]?[0-9]?$/
@@ -85,9 +90,6 @@ const upload = async (file) => {
     }, {prev: arr[0], idx:0})
     };
     
-    // console.log("rowY", rowY)
-    // let start = rowY.map(el=> el.MinTop).reduce((a,b) => Math.min(a,b))
-    // let end = rowY.map(el => el.MinTop).reduce((a,b) => Math.max(a,b))
     remainingLines.sort(function (a, b) {
         return a.MinTop - b.MinTop;
     });
@@ -110,7 +112,7 @@ const upload = async (file) => {
             prev = el
         //}
     }
-    console.log("tbylines", textByLines)
+    // console.log("tbylines", textByLines)
     const items = []
     let total;
     for (let i=0; i < textByLines.length; i++) {
@@ -141,8 +143,8 @@ const upload = async (file) => {
         }
         // items.push(remainingLines.slice(start, end))
     }
-    // console.log(items)
-    const server_addr = "http://bf7d6735.ngrok.io";
+    console.log('items: ', items)
+    const server_addr = "http://1e2b4ff0.ngrok.io";
     const response = await fetch(server_addr + "/query_receipt",
         {
             method: 'POST',
@@ -153,12 +155,21 @@ const upload = async (file) => {
                 total
             })
     })
+
+    //console.log(response.json());
+
     // console.log(await response.json()); 
-    return response.json()["receipt"]; 
+    return await response.json(); 
+  }
+  catch(error){
+    console.log(error)
+  }
+    
 };
 
 
-export default function HomeScreen(props: NavigationScreenProps) {
+export default function HomeScreen(props) {
+  const { navigate } = props.navigation;
   const [hasPermission, setHasPermission] = useState(null);
   const [showSpinner, setSpinner] = useState(false);
   const [type, setType] = useState(Camera.Constants.Type.back);
@@ -223,10 +234,10 @@ export default function HomeScreen(props: NavigationScreenProps) {
                         type: 'image/jpg',
                         name: 'photo.jpg',
                     };
-                    const items = await upload(file); 
-
-                    this.props.navigation.navigate('LinksScreen', {});
-                  
+                    const parsedReceipt = await upload(file);
+                    console.log(parsedReceipt);
+                    console.log("returned")
+                    navigate('Links')
                   } catch (error) {
                     console.log(error)
                   } 
@@ -247,6 +258,7 @@ export default function HomeScreen(props: NavigationScreenProps) {
               ],
               { cancelable: false }
             );
+
             }}>
             <Text style={{ fontSize: 18, marginBottom: 10, color: 'white' }}> Snap </Text>
           </TouchableOpacity>
