@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { ExpoConfigView } from '@expo/samples';
 import {
     Image,
@@ -31,7 +31,16 @@ const toEnglishCase = (str) => {
    return splitStr.join(' '); 
 };
 
-let tripSummary = [
+let ids = [
+    '995d4fa9-09d8-46fc-bfdb-e1a16925a47b',
+    'cc2e3485-2e5a-4eb7-8ddd-1fef785577f7',
+    '3a98992b-bc48-49f8-9bb7-55ae0b4777c2',
+    'c1a7f2a3-4e7b-4e23-bc4b-af53de6399ba',
+    '3a98992b-bc48-49f8-9bb7-55ae0b4777c3',
+    'c1a7f2a3-4e7b-4e23-bc4b-af53de6399bb',
+];
+
+let mockTripSummary = [
         {'footprint': 9.2558, 'source': 'fruits'},
         {'footprint': 8.1, 'source': 'vegetables'},
         {'footprint': 19.2558, 'source': 'poultry'},
@@ -40,6 +49,8 @@ let tripSummary = [
         {'footprint': 9.2558, 'source': 'fish'},
         {'footprint': 1, 'source': 'lentils'}
     ];
+
+let curIdIter = 0;
 
 let lastMonthCarbonFootprints = [
     {'total': 4.5078, 'date': 7},
@@ -50,26 +61,28 @@ let lastMonthCarbonFootprints = [
 
 let thisMonthCarbonFootprints = [
     {'total': 12.05574, 'date': 1},
-    {'total': 14.69642, 'date': 10},
+    {'total': 14.69642, 'date': 9},
 ]
 
-export default function SettingsScreen() {
-    return (
-        <ScrollView style={styles.Container}>
-        <FootprintProgressChart
-            lastMonthCarbonFootprints={lastMonthCarbonFootprints}
-            thisMonthCarbonFootprints={thisMonthCarbonFootprints}
-        />
-        <Text>CO2 Footprint Breakdown (2020/01/02):</Text>
-        <CarbonBreakdownPieChart
-                breakdown={tripSummary}
-                width={screenWidth}
-                height={0.3 * screenHeight}
-                backgroundColor="transparent"
+export default class SettingsScreen extends Component {
+    render() {
+        return (
+            <ScrollView style={styles.Container}>
+            <FootprintProgressChart
+                lastMonthCarbonFootprints={lastMonthCarbonFootprints}
+                thisMonthCarbonFootprints={thisMonthCarbonFootprints}
             />
-        <Text>Itemized Receipt:</Text>
-        </ScrollView>
-    );
+            <Text>CO2 Footprint Breakdown (2020/01/02):</Text>
+            <CarbonBreakdownPieChart
+                    breakdown={mockTripSummary}
+                    width={screenWidth}
+                    height={0.3 * screenHeight}
+                    backgroundColor="transparent"
+                />
+            <Text>Itemized Receipt:</Text>
+            </ScrollView>
+        );
+    }
 }
 
 SettingsScreen.navigationOptions = {
