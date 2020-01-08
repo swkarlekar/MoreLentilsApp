@@ -224,10 +224,9 @@ export default function HomeScreen(props: NavigationScreenProps) {
                         name: 'photo.jpg',
                     };
                     const items = await upload(file); 
-                    this.props.navigation.navigate('Screen2', {
-                            yourArray: this.state.yourArray, });
-                        
 
+                    this.props.navigation.navigate('LinksScreen', {});
+                  
                   } catch (error) {
                     console.log(error)
                   } 
