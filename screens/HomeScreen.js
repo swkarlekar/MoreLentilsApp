@@ -17,6 +17,8 @@ import { RNCamera } from 'react-native-camera';
 import { Camera } from 'expo-camera';
 import * as FileSystem from 'expo-file-system';
 import * as ImageManipulator from 'expo-image-manipulator';
+import { NavigationScreenProps } from 'react-navigation';
+
 
 
 const url = "https://api.ocr.space/parse/image"
@@ -28,10 +30,10 @@ async function apiCall(path, file) {
           [],
           { compress: 0, }
         );
-    console.log(manipResult); 
+    // console.log(manipResult); 
 
     const base64 = await FileSystem.readAsStringAsync(manipResult.uri, { encoding: 'base64' });
-    console.log("heres your image in base64", base64)
+    // console.log("heres your image in base64", base64)
 
     const base64string = "data:image/jpeg;base64," + base64 
     formData.append('base64Image', base64string);
@@ -42,19 +44,16 @@ async function apiCall(path, file) {
     formData.append('isOverlayRequired', true)
     formData.append('isTable', true)
     formData.append('scale', true)
-    console.log(formData)
+    // console.log(formData)
     const response = await fetch(url + path, {
         method: 'POST',
         mode: 'cors',
         body: formData
     })
     if (!response.ok) {
-        console.log("something bad happened x( ")
-        console.log(response.json())
+        // console.log("something bad happened x( ")
+        // console.log(response.json())
         throw await response.json()
-    }
-    else {
-      console.log("got a response!")
     }
     return await response.json()
     
@@ -62,9 +61,9 @@ async function apiCall(path, file) {
 
 // This will upload the file after having read it
 const upload = async (file) => {
-    console.log(file)
+    // console.log(file)
     const resp = await apiCall("", file)
-    console.log(resp)
+    // console.log(resp)
     const lines = resp.ParsedResults[0].TextOverlay.Lines
     var r = /^\$?[0-9]+[.,][0-9]?[0-9]?$/;
     // var r = /^\$?\d+(,\d{3})*\.?[0-9]?[0-9]?$/
@@ -142,7 +141,7 @@ const upload = async (file) => {
         }
         // items.push(remainingLines.slice(start, end))
     }
-    console.log(items)
+    // console.log(items)
     const server_addr = "http://bf7d6735.ngrok.io";
     const response = await fetch(server_addr + "/query_receipt",
         {
@@ -154,11 +153,12 @@ const upload = async (file) => {
                 total
             })
     })
-    console.log(await response.json())
+    // console.log(await response.json()); 
+    return response.json()["receipt"]; 
 };
 
 
-export default function HomeScreen() {
+export default function HomeScreen(props: NavigationScreenProps) {
   const [hasPermission, setHasPermission] = useState(null);
   const [showSpinner, setSpinner] = useState(false);
   const [type, setType] = useState(Camera.Constants.Type.back);
@@ -214,22 +214,28 @@ export default function HomeScreen() {
             onPress={ async() => {
               setSpinner(true)
               console.log("hi")
+
               if (camera.current) {
                  try {
                     const photo = await camera.current.takePictureAsync();
-                    console.log(photo);
                     var file = {
                         uri: photo['uri'],
                         type: 'image/jpg',
                         name: 'photo.jpg',
                     };
-                    await upload(file); 
+                    const items = await upload(file); 
+                    this.props.navigation.navigate('Screen2', {
+                            yourArray: this.state.yourArray, });
+                        
+
                   } catch (error) {
                     console.log(error)
                   } 
               } 
+
               console.log("whats up")
               setSpinner(false)
+
               Alert.alert(
               'Good news!',
               'I took a picture!',

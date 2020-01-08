@@ -19,6 +19,8 @@ import {
     Alert, 
     Dimensions,
 } from 'react-native';
+import { NavigationScreenProps } from 'react-navigation';
+
 
 import CarbonBreakdownPieChart from '../components/CarbonBreakdownPieChart'
 
