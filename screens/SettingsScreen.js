@@ -1,15 +1,11 @@
 import React, { Component } from 'react';
-import { ExpoConfigView } from '@expo/samples';
 import {
-    Image,
-    Platform,
     ScrollView,
     StyleSheet,
     Text,
-    TouchableOpacity,
     View,
-    Alert, 
     Dimensions,
+    TouchableOpacity,
 } from 'react-native';
 import { NavigationScreenProps } from 'react-navigation';
 
@@ -50,7 +46,7 @@ let mockTripSummary = [
         {'footprint': 1, 'source': 'lentils'}
     ];
 
-let curIdIter = 0;
+let curIdIter = 3;
 
 let lastMonthCarbonFootprints = [
     {'total': 4.5078, 'date': 7},
@@ -64,7 +60,54 @@ let thisMonthCarbonFootprints = [
     {'total': 14.69642, 'date': 9},
 ]
 
+
+const server_addr = "http://4307a77d.ngrok.io";
+
 export default class SettingsScreen extends Component {
+    state = {
+        'tripSummary': mockTripSummary,
+    }
+
+    updateToTripId = async (tripId) => {
+        const response = await fetch(server_addr + "/query_trip/",
+            {
+                method: 'POST',
+                mode: 'cors',
+                headers: new Headers({ 'Content-Type': 'application/json' }),
+                body: JSON.stringify({
+                    trip_id: tripId,
+                })
+            });
+
+        let summary = await response.json()
+
+        this.state.tripSummary = summary.breakdown;
+
+        this.setState(this.state);
+
+    }
+
+    showBreakdownFromLastTrip = async () => {
+        if (curIdIter != 0) {
+            curIdIter -= 1;
+        }
+
+        console.log(curIdIter);
+
+        await this.updateToTripId(ids[curIdIter]);
+    }
+
+    showBreakdownFromNextTrip = async () => {
+        if (curIdIter != ids.length - 1) {
+            curIdIter += 1;
+        }
+
+        console.log(curIdIter);
+
+        await this.updateToTripId(ids[curIdIter]);
+    }
+
+
     render() {
         return (
             <ScrollView style={styles.Container}>
@@ -74,12 +117,20 @@ export default class SettingsScreen extends Component {
             />
             <Text>CO2 Footprint Breakdown (2020/01/02):</Text>
             <CarbonBreakdownPieChart
-                    breakdown={mockTripSummary}
+                    breakdown={this.state.tripSummary}
                     width={screenWidth}
                     height={0.3 * screenHeight}
                     backgroundColor="transparent"
                 />
             <Text>Itemized Receipt:</Text>
+            <View style={{flex: 1, flexDirection: 'row'}}>
+                <TouchableOpacity onPress={this.showBreakdownFromLastTrip}>
+                <Text> Last Receipt </Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={this.showBreakdownFromNextTrip}>
+                <Text> Next Receipt </Text>
+                </TouchableOpacity>
+            </View>
             </ScrollView>
         );
     }
