@@ -1,5 +1,6 @@
 import * as WebBrowser from 'expo-web-browser';
 import React, { useState, useEffect, useRef } from 'react';
+import Spinner from 'react-native-loading-spinner-overlay';
 import {
   Image,
   Platform,
@@ -85,9 +86,9 @@ const upload = async (file) => {
     }, {prev: arr[0], idx:0})
     };
     
-    console.log("rowY", rowY)
-    let start = rowY.map(el=> el.MinTop).reduce((a,b) => Math.min(a,b))
-    let end = rowY.map(el => el.MinTop).reduce((a,b) => Math.max(a,b))
+    // console.log("rowY", rowY)
+    // let start = rowY.map(el=> el.MinTop).reduce((a,b) => Math.min(a,b))
+    // let end = rowY.map(el => el.MinTop).reduce((a,b) => Math.max(a,b))
     remainingLines.sort(function (a, b) {
         return a.MinTop - b.MinTop;
     });
@@ -98,7 +99,7 @@ const upload = async (file) => {
     let curr = []
     let epsilon = 10;
     for (const el of remainingLines) {
-        if (el.MinTop > (start - epsilon) && el.MinTop < (end + epsilon)){
+        // if (el.MinTop > (start - epsilon) && el.MinTop < (end + epsilon)){
             if (!prev) { prev = el}
             
             if (Math.abs(el.MinTop - prev.MinTop) > epsilon) {
@@ -108,7 +109,7 @@ const upload = async (file) => {
                 curr.push(el)
             }
             prev = el
-        }
+        //}
     }
     console.log("tbylines", textByLines)
     const items = []
@@ -116,8 +117,10 @@ const upload = async (file) => {
     for (let i=0; i < textByLines.length; i++) {
         const name = textByLines[i].map(el => el.LineText).join(" ").toLowerCase()
         if (name.includes("total")) {
-            total = closest(rowY, textByLines[i][0].MinTop).LineText
-            console.log(name, total)
+            if (rowY.length) {
+              total = closest(rowY, textByLines[i][0].MinTop).LineText
+              console.log(name, total)
+            }
         }
         let item;
         let descriptor = i + 1 < textByLines.length ? textByLines[i + 1].map(el => el.LineText).join(" ") : ""
@@ -157,6 +160,7 @@ const upload = async (file) => {
 
 export default function HomeScreen() {
   const [hasPermission, setHasPermission] = useState(null);
+  const [showSpinner, setSpinner] = useState(false);
   const [type, setType] = useState(Camera.Constants.Type.back);
 
   useEffect(() => {
@@ -208,6 +212,7 @@ export default function HomeScreen() {
               alignItems: 'center',
             }}
             onPress={ async() => {
+              setSpinner(true)
               console.log("hi")
               if (camera.current) {
                  try {
@@ -224,6 +229,7 @@ export default function HomeScreen() {
                   } 
               } 
               console.log("whats up")
+              setSpinner(false)
               Alert.alert(
               'Good news!',
               'I took a picture!',
@@ -240,6 +246,10 @@ export default function HomeScreen() {
             <Text style={{ fontSize: 18, marginBottom: 10, color: 'white' }}> Snap </Text>
           </TouchableOpacity>
         </View>
+        <Spinner
+          visible={showSpinner}
+          textContent={'Loading...'}
+        />
       </Camera>
     </View>
   );
