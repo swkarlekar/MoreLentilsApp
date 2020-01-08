@@ -20,8 +20,51 @@ const toEnglishCase = (str) => {
    return splitStr.join(' '); 
 };
 
+let serverReply_1 = {'breakdown': [{'footprint': 0.87, 'source': 'vegetables'},
+               {'footprint': 1.0, 'source': 'tofu'},
+               {'footprint': 7.22, 'source': 'diary'},
+               {'footprint': 15.309, 'source': 'red meat'}],
+ 'itemized': [{'footprint': 0.87, 'goodness': 0.9275, 'name': 'potatoes'},
+              {'footprint': 12.2472, 'goodness': 0.325, 'name': 'beef'},
+              {'footprint': 1.0, 'goodness': 0.95, 'name': 'tofu'},
+              {'footprint': 3.0618, 'goodness': 0.325, 'name': 'ground beef'},
+              {'footprint': 7.22, 'goodness': 0.9525, 'name': 'milk'}],
+ 'total_carbon_footprint': 24.399}
 
-let serverReply = {
+let serverReply_2 = {'breakdown': [{'footprint': 6.1236, 'source': 'grains'},
+               {'footprint': 3.05, 'source': 'fish'},
+               {'footprint': 1.37214, 'source': 'red meat'},
+               {'footprint': 1.51, 'source': 'vegetables'}],
+ 'itemized': [{'footprint': 0.51, 'goodness': 0.95, 'name': 'broccoli'},
+              {'footprint': 3.05,
+               'goodness': 0.8474999999999999,
+               'name': 'tuna'},
+              {'footprint': 1.37214, 'goodness': 0.6975, 'name': 'pork'},
+              {'footprint': 1.0, 'goodness': 0.95, 'name': 'cabbage'},
+              {'footprint': 6.1236,
+               'goodness': 0.9324999999999999,
+               'name': 'rice'}],
+ 'total_carbon_footprint': 12.05574}
+
+let serverReply_3 = {'breakdown': [{'footprint': 3.3600000000000003, 'source': 'vegetables'},
+               {'footprint': 7.22, 'source': 'diary'},
+               {'footprint': 4.11642, 'source': 'red meat'}],
+ 'itemized': [{'footprint': 4.11642, 'goodness': 0.6975, 'name': 'pork'},
+              {'footprint': 1.36, 'goodness': 0.95, 'name': 'cucumber'},
+              {'footprint': 2.0, 'goodness': 0.95, 'name': 'eggplant'},
+              {'footprint': 7.22, 'goodness': 0.9525, 'name': 'milk'}],
+ 'total_carbon_footprint': 14.69642}
+
+let serverReply_4 = {'breakdown': [{'footprint': 1.378, 'source': 'vegetables'},
+               {'footprint': 3.12984, 'source': 'poultry'}],
+ 'itemized': [{'footprint': 3.12984, 'goodness': 0.8275, 'name': 'chicken'},
+              {'footprint': 0.87, 'goodness': 0.9275, 'name': 'potatoes'},
+              {'footprint': 0.288, 'goodness': 0.95, 'name': 'carrots'},
+              {'footprint': 0.22, 'goodness': 0.95, 'name': 'onion'}],
+ 'total_carbon_footprint': 4.50784}
+
+
+let serverReply_fake = {
     'breakdown': [
         {'footprint': 9.2558, 'source': 'fruits'},
         {'footprint': 8.1, 'source': 'vegetables'},
@@ -60,6 +103,8 @@ let serverReply = {
     'goodness': 0.5
 }
 
+let serverReply = serverReply_1;
+
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
@@ -97,13 +142,7 @@ export default function LinksScreen() {
                     </Text>
                 </View>
                 <View style={styles.rightJustified}>
-                    <Text style={{
-                        color:getGreenToRed(serverReply.goodness * 100),
-                        fontStyle: 'normal',
-                        fontWeight: 'bold',
-                        fontSize: 20,
-                        lineHeight: 20,
-                    }}>
+                    <Text style={styles.BoldTextR}>
                         {serverReply.total_carbon_footprint.toFixed(1)}
                     </Text>
                 </View>
@@ -176,13 +215,21 @@ const styles = StyleSheet.create({
         color: '#5f5f5f',
     },
     BoldText: {
-        flex: 1,
         fontStyle: 'normal',
         fontWeight: 'bold',
         fontSize: 20,
         lineHeight: 20,
         color: '#5f5f5f',
     },
+    BoldTextR: {
+        textAlign: 'right',
+        fontStyle: 'normal',
+        fontWeight: 'bold',
+        fontSize: 20,
+        lineHeight: 20,
+        color: '#5f5f5f',
+    },
+
     Container : {
         paddingLeft: 0.05 * screenWidth,
         paddingRight: 0.05 * screenHeight,
