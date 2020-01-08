@@ -132,7 +132,7 @@ const upload = async (file) => {
         }
     }
     console.log('items: ', items)
-    const server_addr = "http://1e2b4ff0.ngrok.io";
+    const server_addr = "http://4307a77d.ngrok.io";
     const response = await fetch(server_addr + "/query_receipt",
         {
             method: 'POST',
