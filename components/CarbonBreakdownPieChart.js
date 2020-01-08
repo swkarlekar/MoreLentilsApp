@@ -1,11 +1,7 @@
 import React, { Component } from 'react';
 import { Dimensions } from 'react-native';
 
-import {
-  View,
-  Platform,
-  TextInput
-} from 'react-native';
+import { View, } from 'react-native';
 
 import { PieChart } from 'react-native-chart-kit';
 
@@ -27,10 +23,12 @@ const color_mapper = {
     'fruits': '#aefcbf',
     'vegetables': '#7fb88b',
     'red meat': '#ffb5bc',
-    'poultry': '#ffbfa5',
+    'poultry': '#ff996d',
     'diary': '#f4e59a',
     'fish': '#b6afd8',
     'lentils': '#a6d2fc',
+    'tofu': '#fcf9e3',
+    'grains': '#e0e0e0'
 };
 
 const chartConfig = {
