@@ -207,7 +207,7 @@ export default function HomeScreen(props) {
               alignSelf: 'flex-end',
               alignItems: 'center',
             }}
-            onPress={ async() => {
+            onPress={ async () => {
               setSpinner(true)
               if (camera.current) {
                  try {
@@ -219,7 +219,7 @@ export default function HomeScreen(props) {
                     };
                     const parsedReceipt = await upload(file);
                     console.log(parsedReceipt);
-                    navigate('Links')
+                    navigate('Links', {data: JSON.stringify(parsedReceipt)})
                   } catch (error) {
                     console.log(error)
                   } 
