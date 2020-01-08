@@ -7,8 +7,6 @@ import { PieChart } from 'react-native-chart-kit';
 
 import CarbonBreakdownPieChart from '../components/CarbonBreakdownPieChart'
 
-console.log(CarbonBreakdownPieChart);
-
 const toEnglishCase = (str) => {
    var splitStr = str.toLowerCase().split(' ');
    for (var i = 0; i < splitStr.length; i++) {

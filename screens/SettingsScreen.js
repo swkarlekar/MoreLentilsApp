@@ -20,6 +20,8 @@ import {
     Dimensions,
 } from 'react-native';
 
+import CarbonBreakdownPieChart from '../components/CarbonBreakdownPieChart'
+
 const screenHeight = Dimensions.get("window").height;
 const screenWidth = Dimensions.get("window").width;
 
@@ -41,8 +43,6 @@ const pieChartConfig = {
   }
 }
 
-
-
 const toEnglishCase = (str) => {
    var splitStr = str.toLowerCase().split(' ');
    for (var i = 0; i < splitStr.length; i++) {
@@ -54,18 +54,6 @@ const toEnglishCase = (str) => {
    return splitStr.join(' '); 
 };
 
-const color_mapper = {
-    'fruits': '#aefcbf',
-    'vegetables': '#7fb88b',
-    'red meat': '#ffb5bc',
-    'poultry': '#ffbfa5',
-    'diary': '#f4e59a',
-    'fish': '#b6afd8',
-    'lentils': '#a6d2fc',
-};
-
-
-
 let tripSummary = [
         {'footprint': 9.2558, 'source': 'fruits'},
         {'footprint': 8.1, 'source': 'vegetables'},
@@ -75,17 +63,6 @@ let tripSummary = [
         {'footprint': 9.2558, 'source': 'fish'},
         {'footprint': 1, 'source': 'lentils'}
     ];
-
-let pieChartData = tripSummary.map(
-    (item) => {
-        return {
-            'footprint': item.footprint,
-            'name': toEnglishCase(item.source),
-            'color': color_mapper[item.source],
-            'legendFontColor': '#5f5f5f'
-        };
-    }
-);
 
 export default function SettingsScreen() {
     /**
@@ -137,12 +114,10 @@ export default function SettingsScreen() {
         }}
         />
         <Text>CO2 Footprint Breakdown (2020/01/02):</Text>
-        <PieChart
-                data={pieChartData}
+        <CarbonBreakdownPieChart
+                breakdown={tripSummary}
                 width={screenWidth}
                 height={0.3 * screenHeight}
-                chartConfig={pieChartConfig}
-                accessor="footprint"
                 backgroundColor="transparent"
             />
         <Text>Itemized Receipt:</Text>
