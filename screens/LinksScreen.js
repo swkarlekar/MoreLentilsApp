@@ -5,36 +5,9 @@ import {
 import styled from 'styled-components';
 import { PieChart } from 'react-native-chart-kit';
 
-let serverReply = {'breakdown':
-    [
-        {'footprint': 9.2558, 'source': 'fruits'},
-        {'footprint': 8.1, 'source': 'vegetables'},
-        {'footprint': 19.2558, 'source': 'poultry'},
-        {'footprint': 15.2558, 'source': 'diary'},
-        {'footprint': 20.2558, 'source': 'red meat'},
-        {'footprint': 9.2558, 'source': 'fish'},
-        {'footprint': 1, 'source': 'lentils'}
-    ],
- 'itemized': [{'footprint': 0.4862,
-               'goodness': 0.9724999999999999,
-               'name': 'BANANA CAVENDISH'},
-              {'footprint': 3.8512,
-               'goodness': 0.9275,
-               'name': 'POTATOES BRUSHED'},
-              {'footprint': 1.616, 'goodness': 0.95, 'name': 'BROCCOLI'},
-              {'footprint': 1.2914,
-               'goodness': 0.9724999999999999,
-               'name': 'GRAPES GREEN'},
-              {'footprint': 0.436, 'goodness': 0.95, 'name': 'PEAS SNOW'},
-              {'footprint': 0.49500000000000005,
-               'goodness': 0.9724999999999999,
-               'name': 'TOMATOES GRAPE'},
-              {'footprint': 1.08, 'goodness': 0.95, 'name': 'LETTUCE ICEBERG'}],
- 'total_carbon_footprint': 9.2558,
-'goodness': 0.5}
+import CarbonBreakdownPieChart from '../components/CarbonBreakdownPieChart'
 
-const screenWidth = Dimensions.get("window").width;
-const screenHeight = Dimensions.get("window").height;
+console.log(CarbonBreakdownPieChart);
 
 const toEnglishCase = (str) => {
    var splitStr = str.toLowerCase().split(' ');
@@ -47,15 +20,48 @@ const toEnglishCase = (str) => {
    return splitStr.join(' '); 
 };
 
-const color_mapper = {
-    'fruits': '#aefcbf',
-    'vegetables': '#7fb88b',
-    'red meat': '#ffb5bc',
-    'poultry': '#ffbfa5',
-    'diary': '#f4e59a',
-    'fish': '#b6afd8',
-    'lentils': '#a6d2fc',
-};
+
+let serverReply = {
+    'breakdown': [
+        {'footprint': 9.2558, 'source': 'fruits'},
+        {'footprint': 8.1, 'source': 'vegetables'},
+        {'footprint': 19.2558, 'source': 'poultry'},
+        {'footprint': 15.2558, 'source': 'diary'},
+        {'footprint': 20.2558, 'source': 'red meat'},
+        {'footprint': 9.2558, 'source': 'fish'},
+        {'footprint': 1, 'source': 'lentils'}
+    ],
+    'itemized': [
+        {
+            'footprint': 0.4862,
+            'goodness': 0.9724999999999999,
+            'name': 'BANANA CAVENDISH'
+        },
+        {
+            'footprint': 3.8512,
+            'goodness': 0.9275,
+            'name': 'POTATOES BRUSHED'
+        },
+        {'footprint': 1.616, 'goodness': 0.95, 'name': 'BROCCOLI'},
+        {
+            'footprint': 1.2914,
+            'goodness': 0.9724999999999999,
+            'name': 'GRAPES GREEN'
+        },
+        {'footprint': 0.436, 'goodness': 0.95, 'name': 'PEAS SNOW'},
+        {
+            'footprint': 0.49500000000000005,
+            'goodness': 0.9724999999999999,
+            'name': 'TOMATOES GRAPE'
+        },
+        {'footprint': 1.08, 'goodness': 0.95, 'name': 'LETTUCE ICEBERG'}
+    ],
+    'total_carbon_footprint': 9.2558,
+    'goodness': 0.5
+}
+
+const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
 
 const getGreenToRed = (percent) => {
     console.log(percent);
@@ -66,23 +72,6 @@ const getGreenToRed = (percent) => {
     return rv;
 };
 
-const chartConfig = {
-  backgroundColor: "#e26a00",
-  backgroundGradientFrom: "#fb8c00",
-  backgroundGradientTo: "#ffa726",
-  decimalPlaces: 2, // optional, defaults to 2dp
-  color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-  labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-  style: {
-    borderRadius: 16
-  },
-  propsForDots: {
-    r: "6",
-    strokeWidth: "2",
-    stroke: "#ffa726"
-  }
-}
-
 const ReceiptList = styled.FlatList`
     position: absolute;
     top: 40%;
@@ -90,30 +79,17 @@ const ReceiptList = styled.FlatList`
 `;
 
 export default function LinksScreen() {
-    let pieChartData = serverReply.breakdown.map(
-        (item) => {
-            return {
-                'footprint': item.footprint,
-                'name': toEnglishCase(item.source),
-                'color': color_mapper[item.source],
-                'legendFontColor': '#5f5f5f'
-            };
-        }
-    );
-
-    console.log(pieChartData);
 
     return (
         <ScrollView>
-            <PieChart
-                data={pieChartData}
+        <View style={styles.Container}>
+            <CarbonBreakdownPieChart
+                breakdown={serverReply.breakdown}
                 width={screenWidth}
                 height={0.4 * screenHeight}
-                chartConfig={chartConfig}
-                accessor="footprint"
                 backgroundColor="transparent"
-                paddingLeft={0.05 * screenWidth}
             />
+        </View>
             <View style={styles.ReceiptItem}>
                 <View style={styles.TextSpan}>
                     <Text numberOfLines={1} style={styles.BoldText}>
@@ -206,6 +182,9 @@ const styles = StyleSheet.create({
         fontSize: 20,
         lineHeight: 20,
         color: '#5f5f5f',
+    },
+    Container : {
+        paddingLeft: 0.05 * screenWidth,
+        paddingRight: 0.05 * screenHeight,
     }
-
 });
