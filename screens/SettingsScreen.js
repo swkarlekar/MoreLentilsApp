@@ -1,14 +1,6 @@
 import React from 'react';
 import { ExpoConfigView } from '@expo/samples';
 import {
-    LineChart,
-    BarChart,
-    PieChart,
-    ProgressChart,
-    ContributionGraph,
-    StackedBarChart
-} from "react-native-chart-kit";
-import {
     Image,
     Platform,
     ScrollView,
@@ -23,27 +15,10 @@ import { NavigationScreenProps } from 'react-navigation';
 
 
 import CarbonBreakdownPieChart from '../components/CarbonBreakdownPieChart'
+import FootprintProgressChart from '../components/FootprintProgressChart'
 
 const screenHeight = Dimensions.get("window").height;
 const screenWidth = Dimensions.get("window").width;
-
-
-const pieChartConfig = {
-  backgroundColor: "#e26a00",
-  backgroundGradientFrom: "#fb8c00",
-  backgroundGradientTo: "#ffa726",
-  decimalPlaces: 2, // optional, defaults to 2dp
-  color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-  labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-  style: {
-    borderRadius: 16
-  },
-  propsForDots: {
-    r: "6",
-    strokeWidth: "2",
-    stroke: "#ffa726"
-  }
-}
 
 const toEnglishCase = (str) => {
    var splitStr = str.toLowerCase().split(' ');
@@ -66,54 +41,24 @@ let tripSummary = [
         {'footprint': 1, 'source': 'lentils'}
     ];
 
+let lastMonthCarbonFootprints = [
+    {'total': 4.5078, 'date': 7},
+    {'total': 24.399, 'date': 13},
+    {'total': 12.055, 'date': 20},
+    {'total': 14.696, 'date': 27},
+]
+
+let thisMonthCarbonFootprints = [
+    {'total': 12.05574, 'date': 1},
+    {'total': 14.69642, 'date': 10},
+]
+
 export default function SettingsScreen() {
-    /**
-     * Go ahead and delete ExpoConfigView and replace it with your content;
-     * we just wanted to give you a quick view of your config.
-     */
-    const goalTotalFootprint = 55; 
     return (
         <ScrollView style={styles.Container}>
-        <Text>CO2-e (kg)</Text>
-        <LineChart
-        data={{
-            datasets: [
-                {
-                    data: [
-                        Math.random() * 55*2,
-                        Math.random() * 55*2,
-                        Math.random() * 55*2,
-                        Math.random() * 55*2,
-                        Math.random() * 55*2,
-                        Math.random() * 55*2
-                    ]
-                }
-            ]
-        }}
-        width={0.90 * screenWidth} // from react-native
-        height={220}
-        verticalLabelRotation={30}
-        //formatYLabel={label => "CO2-e " + label + "kg"}
-        chartConfig={{
-            backgroundColor: "#B7FFD8",
-            backgroundGradientFrom: "#E2A0FF",
-            backgroundGradientTo: "#C4F5FC",
-            decimalPlaces: 0, // optional, defaults to 2dp
-            color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-            labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-            style: {
-                borderRadius: 18
-            },
-            propsForDots: {
-                r: "6",
-                strokeWidth: "2",
-                stroke: "#67EBFC"
-            },
-        }}
-        bezier
-        style={{
-            marginVertical: 8,
-        }}
+        <FootprintProgressChart
+            lastMonthCarbonFootprints={lastMonthCarbonFootprints}
+            thisMonthCarbonFootprints={thisMonthCarbonFootprints}
         />
         <Text>CO2 Footprint Breakdown (2020/01/02):</Text>
         <CarbonBreakdownPieChart
