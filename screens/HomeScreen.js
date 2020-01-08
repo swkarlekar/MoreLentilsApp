@@ -31,10 +31,8 @@ async function apiCall(path, file) {
           [],
           { compress: 0, }
         );
-    // console.log(manipResult); 
 
     const base64 = await FileSystem.readAsStringAsync(manipResult.uri, { encoding: 'base64' });
-    // console.log("heres your image in base64", base64)
 
     const base64string = "data:image/jpeg;base64," + base64 
     formData.append('base64Image', base64string);
@@ -45,14 +43,12 @@ async function apiCall(path, file) {
     formData.append('isOverlayRequired', true)
     formData.append('isTable', true)
     formData.append('scale', true)
-    // console.log(formData)
     const response = await fetch(url + path, {
         method: 'POST',
         mode: 'cors',
         body: formData
     })
     if (!response.ok) {
-        console.log("something bad happened x( ")
         console.log(response.json())
         throw await response.json()
     }
@@ -68,16 +64,13 @@ async function apiCall(path, file) {
 const upload = async (file) => {
   try{
     const resp = await apiCall("", file)
-    console.log(resp.ParsedResults[0].ParsedText)
     const lines = resp.ParsedResults[0].TextOverlay.Lines
     var r = /^\$?[0-9]+[.,][0-9]?[0-9]?$/;
-    // var r = /^\$?\d+(,\d{3})*\.?[0-9]?[0-9]?$/
     const rowY = []
     const remainingLines = []
 
     for (const el of lines){
         let isDollar = el.LineText.split(" ").some(word => r.test(word)) && !(el.LineText.includes("lb") || el.LineText.includes("kg") || el.LineText.includes("@"))
-        // console.log(el.LineText.split(" "), isDollar)
         if (isDollar) {
             rowY.push(el)
         } else {
@@ -100,7 +93,6 @@ const upload = async (file) => {
     let curr = []
     let epsilon = 10;
     for (const el of remainingLines) {
-        // if (el.MinTop > (start - epsilon) && el.MinTop < (end + epsilon)){
             if (!prev) { prev = el}
             
             if (Math.abs(el.MinTop - prev.MinTop) > epsilon) {
@@ -110,9 +102,7 @@ const upload = async (file) => {
                 curr.push(el)
             }
             prev = el
-        //}
     }
-    // console.log("tbylines", textByLines)
     const items = []
     let total;
     for (let i=0; i < textByLines.length; i++) {
@@ -120,7 +110,6 @@ const upload = async (file) => {
         if (name.includes("total")) {
             if (rowY.length) {
               total = closest(rowY, textByLines[i][0].MinTop).LineText
-              console.log(name, total)
             }
         }
         let item;
@@ -141,7 +130,6 @@ const upload = async (file) => {
         else {
             items.push({name, quantity: 1.0, unit: 'ea'})
         }
-        // items.push(remainingLines.slice(start, end))
     }
     console.log('items: ', items)
     const server_addr = "http://1e2b4ff0.ngrok.io";
@@ -156,9 +144,6 @@ const upload = async (file) => {
             })
     })
 
-    //console.log(response.json());
-
-    // console.log(await response.json()); 
     return await response.json(); 
   }
   catch(error){
@@ -224,8 +209,6 @@ export default function HomeScreen(props) {
             }}
             onPress={ async() => {
               setSpinner(true)
-              console.log("hi")
-
               if (camera.current) {
                  try {
                     const photo = await camera.current.takePictureAsync();
@@ -236,14 +219,11 @@ export default function HomeScreen(props) {
                     };
                     const parsedReceipt = await upload(file);
                     console.log(parsedReceipt);
-                    console.log("returned")
                     navigate('Links')
                   } catch (error) {
                     console.log(error)
                   } 
               } 
-
-              console.log("whats up")
               setSpinner(false)
 
             }}>
