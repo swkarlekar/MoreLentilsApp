@@ -5,6 +5,7 @@ import {
     Text,
     View,
     Dimensions,
+    PixelRatio,
     TouchableOpacity,
 } from 'react-native';
 import { NavigationScreenProps } from 'react-navigation';
@@ -28,7 +29,16 @@ const toEnglishCase = (str) => {
    // Directly return the joined string
    return splitStr.join(' '); 
 };
-
+const ios_scale = screenWidth / 380;
+const scaleTextSize = (size) => {
+  const newSize = size * ios_scale 
+  if (Platform.OS === 'ios') {
+    return Math.round(PixelRatio.roundToNearestPixel(newSize)) - 1
+  } else {
+    return Math.round(PixelRatio.roundToNearestPixel(newSize)) + 2
+  }
+}
+  
 let ids = [
     '995d4fa9-09d8-46fc-bfdb-e1a16925a47b',
     'cc2e3485-2e5a-4eb7-8ddd-1fef785577f7',
@@ -254,7 +264,7 @@ export default class SettingsScreen extends Component {
         return (
             <ScrollView style={styles.Container}>
             <Text style={{
-                fontSize: 18,
+                fontSize: scaleTextSize(16),
                 fontWeight: "bold"
             }}>Cumulative Carbon Footprint - {monthNameMapper(this.state.month)}, {this.state.year}</Text>
 
@@ -267,7 +277,7 @@ export default class SettingsScreen extends Component {
                 }
                 currentOne={this.state.currentOne}
             />
-                    <Text style={{ fontSize: 18 }}>
+                    <Text style={{ fontSize: scaleTextSize(18) }}>
                     Carbon Footprint
                     ({this.state.year + "/" + this.state.month + "/" + this.state.day}): 
             {this.state.curMonthData.trips[this.state.curTripId].carbon_footprint.toFixed(1)} kg of CO2-e
@@ -301,7 +311,7 @@ export default class SettingsScreen extends Component {
                             width={0.9 * screenWidth}
                             height={0.3 * screenHeight}
                             backgroundColor="transparent"
-                            paddingLeft={0.02 * screenWidth}
+                            paddingLeft={0.05 * screenWidth}
                         />
                     <Text style={{
                         fontSize: 18,
