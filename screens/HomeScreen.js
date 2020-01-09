@@ -159,6 +159,7 @@ export default function HomeScreen(props) {
   const [hasPermission, setHasPermission] = useState(null);
   const [showSpinner, setSpinner] = useState(false);
   const [type, setType] = useState(Camera.Constants.Type.back);
+  const showCamera = !showSpinner; 
 
   useEffect(() => {
     (async () => {
@@ -187,11 +188,11 @@ export default function HomeScreen(props) {
             backgroundColor: 'transparent',
             flexDirection: 'row',
           }}>
+          { (!showSpinner) &&
           <TouchableOpacity
-            style={{
-             
-              
-            }}
+          style={{ 
+            visible: showCamera
+          }}
             onPress={ async () => {
               setSpinner(true)
               if (camera.current) {
@@ -211,13 +212,14 @@ export default function HomeScreen(props) {
                   } 
               } 
 
-            }}>
+            }}> 
             <IconsForButtons name={ 
         Platform.OS === 'ios'
           ? `ios-camera`
            : 'md-camera'
       } alignHorizontal = {0.45} alignVertical = {0.80} />
           </TouchableOpacity>
+        }
         </View>
         <Spinner
           visible={showSpinner}
