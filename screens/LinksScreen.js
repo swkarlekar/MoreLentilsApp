@@ -6,7 +6,6 @@ import { PieChart } from 'react-native-chart-kit';
 import { NavigationScreenProps } from 'react-navigation';
 import CarbonBreakdownPieChart from '../components/CarbonBreakdownPieChart'
 import ItemizedCarbonReceipt from '../components/ItemizedCarbonReceipt'
-import SummaryToProgressIcon from '../components/SummaryToProgressIcon';
 
 
 const toEnglishCase = (str) => {

@@ -13,12 +13,13 @@ import {
 } from 'react-native';
 
 import { MonoText } from '../components/StyledText';
-import { RNCamera } from 'react-native-camera';
 import { Camera } from 'expo-camera';
 import * as FileSystem from 'expo-file-system';
 import * as ImageManipulator from 'expo-image-manipulator';
 import { NavigationScreenProps } from 'react-navigation';
 import LinksScreen from './LinksScreen';
+import IconsForButtons from '../components/IconsForButtons'; 
+
 
 
 const url = "https://api.ocr.space/parse/image"
@@ -188,24 +189,8 @@ export default function HomeScreen(props) {
           }}>
           <TouchableOpacity
             style={{
-              flex: 0.1,
-              alignSelf: 'flex-end',
-              alignItems: 'center',
-            }}
-            onPress={() => {
-              setType(
-                type === Camera.Constants.Type.back
-                  ? Camera.Constants.Type.front
-                  : Camera.Constants.Type.back
-              );
-            }}>
-            <Text style={{ fontSize: 18, marginBottom: 10, color: 'white' }}> Flip </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{
-              flex: 0.1,
-              alignSelf: 'flex-end',
-              alignItems: 'center',
+             
+              
             }}
             onPress={ async () => {
               setSpinner(true)
@@ -225,15 +210,21 @@ export default function HomeScreen(props) {
                     console.log(error)
                   } 
               } 
-              //setSpinner(false)
 
             }}>
-            <Text style={{ fontSize: 18, marginBottom: 10, color: 'white' }}> Snap </Text>
+            <IconsForButtons name={ 
+        Platform.OS === 'ios'
+          ? `ios-camera`
+           : 'md-camera'
+      } alignHorizontal = {0.45} alignVertical = {0.80} />
           </TouchableOpacity>
         </View>
         <Spinner
           visible={showSpinner}
           textContent={'Loading...'}
+          textStyle = {{
+            color: '#fbfbfb'
+          }}
         />
       </Camera>
     </View>

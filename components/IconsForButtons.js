@@ -5,18 +5,20 @@ import {
 } from 'react-native';
 import Colors from '../constants/Colors';
 
-export default function SummaryToProgressIcon(props) {
+export default function IconsForButtons(props) {
 
 	const screenWidth = Dimensions.get("window").width;
-
-	const pad_horizontal = (props.align === 'right' ? .75 : 0)
+  const screenHeight = Dimensions.get("window").height;
+  console.log("horizontal padding", screenWidth*props.alignHorizontal)
 
   return (
     <Ionicons
       name={props.name}
       size={60}
       style={{ 
-      	paddingHorizontal: screenWidth * pad_horizontal}}
+        marginLeft: screenWidth * props.alignHorizontal,
+        marginTop: screenHeight * props.alignVertical,
+      }}
       color={props.focused ? Colors.tabIconSelected : Colors.tabIconDefault}
     />
   );
