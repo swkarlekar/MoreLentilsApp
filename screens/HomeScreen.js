@@ -1,10 +1,10 @@
 import * as WebBrowser from 'expo-web-browser';
+import withUnmounted from '@ishawnwang/withunmounted'
 import React, { useState, useEffect, useRef } from 'react';
 import Spinner from 'react-native-loading-spinner-overlay';
 import {
   Image,
   Platform,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -132,7 +132,7 @@ const upload = async (file) => {
         }
     }
     console.log('items: ', items)
-    const server_addr = "http://4307a77d.ngrok.io";
+    const server_addr = "http://d1ecb8f2.ngrok.io";
     const response = await fetch(server_addr + "/query_receipt",
         {
             method: 'POST',
@@ -219,12 +219,13 @@ export default function HomeScreen(props) {
                     };
                     const parsedReceipt = await upload(file);
                     console.log(parsedReceipt);
+                    setSpinner(false)
                     navigate('Links', {data: JSON.stringify(parsedReceipt)})
                   } catch (error) {
                     console.log(error)
                   } 
               } 
-              setSpinner(false)
+              //setSpinner(false)
 
             }}>
             <Text style={{ fontSize: 18, marginBottom: 10, color: 'white' }}> Snap </Text>

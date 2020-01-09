@@ -14,6 +14,7 @@
   "dependencies": {
     "@expo/samples": "~36.0.0",
     "@expo/vector-icons": "~10.0.0",
+    "@ishawnwang/withunmounted": "^1.0.1",
     "@react-navigation/web": "~1.0.0-alpha.9",
     "@tradle/react-native-http": "^2.0.1",
     "assert": "^1.5.0",
@@ -61,6 +62,7 @@
     "react-native-udp": "^2.7.0",
     "react-native-web": "~0.11.7",
     "react-navigation": "~4.0.10",
+    "react-navigation-selective-tab-bar": "^1.0.3",
     "react-navigation-stack": "~1.10.3",
     "react-navigation-tabs": "~2.6.2",
     "react-timeseries-charts": "^0.16.1",

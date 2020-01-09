@@ -2,6 +2,8 @@ import React from 'react';
 import { Platform } from 'react-native';
 import { createStackNavigator } from 'react-navigation-stack';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
+import BottomTabBar from "react-navigation-selective-tab-bar";
+
 
 import TabBarIcon from '../components/TabBarIcon';
 import HomeScreen from '../screens/HomeScreen';
@@ -36,21 +38,21 @@ HomeStack.navigationOptions = {
 
 HomeStack.path = '';
 
-const LinksStack = createStackNavigator(
-  {
-    Links: LinksScreen,
-  },
-  config
-);
+// const LinksStack = createStackNavigator(
+//   {
+//     Links: LinksScreen,
+//   },
+//   config
+// );
 
-LinksStack.navigationOptions = {
-  tabBarLabel: 'Summary',
-  tabBarIcon: ({ focused }) => (
-    <TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-list' : 'md-list'} />
-  ),
-};
+// LinksStack.navigationOptions = {
+//   tabBarLabel: 'Summary',
+//   tabBarIcon: ({ focused }) => (
+//     <TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-list' : 'md-list'} />
+//   ),
+// };
 
-LinksStack.path = '';
+// LinksStack.path = '';
 
 const SettingsStack = createStackNavigator(
   {
@@ -70,9 +72,8 @@ SettingsStack.path = '';
 
 const tabNavigator = createBottomTabNavigator({
   HomeStack,
-  LinksStack,
   SettingsStack,
-});
+  });
 
 tabNavigator.path = '';
 

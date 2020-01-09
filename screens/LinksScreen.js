@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import {
-    ScrollView, StyleSheet, FlatList, Text, View, Dimensions
+    ScrollView, StyleSheet, FlatList, Text, View, Dimensions, TouchableOpacity, TouchableHighlight, Button
 } from 'react-native';
 import { PieChart } from 'react-native-chart-kit';
 import { NavigationScreenProps } from 'react-navigation';
-
-
 import CarbonBreakdownPieChart from '../components/CarbonBreakdownPieChart'
 import ItemizedCarbonReceipt from '../components/ItemizedCarbonReceipt'
+import SummaryToProgressIcon from '../components/SummaryToProgressIcon';
+
 
 const toEnglishCase = (str) => {
    var splitStr = str.toLowerCase().split(' ');
@@ -31,84 +31,13 @@ let serverReply_1 = {'breakdown': [{'footprint': 0.87, 'source': 'vegetables'},
               {'footprint': 7.22, 'goodness': 0.9525, 'name': 'milk'}],
  'total_carbon_footprint': 24.399}
 
-// let serverReply_2 = {'breakdown': [{'footprint': 6.1236, 'source': 'grains'},
-//                {'footprint': 3.05, 'source': 'fish'},
-//                {'footprint': 1.37214, 'source': 'red meat'},
-//                {'footprint': 1.51, 'source': 'vegetables'}],
-//  'itemized': [{'footprint': 0.51, 'goodness': 0.95, 'name': 'broccoli'},
-//               {'footprint': 3.05,
-//                'goodness': 0.8474999999999999,
-//                'name': 'tuna'},
-//               {'footprint': 1.37214, 'goodness': 0.6975, 'name': 'pork'},
-//               {'footprint': 1.0, 'goodness': 0.95, 'name': 'cabbage'},
-//               {'footprint': 6.1236,
-//                'goodness': 0.9324999999999999,
-//                'name': 'rice'}],
-//  'total_carbon_footprint': 12.05574}
-
-// let serverReply_3 = {'breakdown': [{'footprint': 3.3600000000000003, 'source': 'vegetables'},
-//                {'footprint': 7.22, 'source': 'diary'},
-//                {'footprint': 4.11642, 'source': 'red meat'}],
-//  'itemized': [{'footprint': 4.11642, 'goodness': 0.6975, 'name': 'pork'},
-//               {'footprint': 1.36, 'goodness': 0.95, 'name': 'cucumber'},
-//               {'footprint': 2.0, 'goodness': 0.95, 'name': 'eggplant'},
-//               {'footprint': 7.22, 'goodness': 0.9525, 'name': 'milk'}],
-//  'total_carbon_footprint': 14.69642}
-
-// let serverReply_4 = {'breakdown': [{'footprint': 1.378, 'source': 'vegetables'},
-//                {'footprint': 3.12984, 'source': 'poultry'}],
-//  'itemized': [{'footprint': 3.12984, 'goodness': 0.8275, 'name': 'chicken'},
-//               {'footprint': 0.87, 'goodness': 0.9275, 'name': 'potatoes'},
-//               {'footprint': 0.288, 'goodness': 0.95, 'name': 'carrots'},
-//               {'footprint': 0.22, 'goodness': 0.95, 'name': 'onion'}],
-//  'total_carbon_footprint': 4.50784}
-
-
-// let serverReply_fake = {
-//     'breakdown': [
-//         {'footprint': 9.2558, 'source': 'fruits'},
-//         {'footprint': 8.1, 'source': 'vegetables'},
-//         {'footprint': 19.2558, 'source': 'poultry'},
-//         {'footprint': 15.2558, 'source': 'diary'},
-//         {'footprint': 20.2558, 'source': 'red meat'},
-//         {'footprint': 9.2558, 'source': 'fish'},
-//         {'footprint': 1, 'source': 'lentils'}
-//     ],
-//     'itemized': [
-//         {
-//             'footprint': 0.4862,
-//             'goodness': 0.9724999999999999,
-//             'name': 'BANANA CAVENDISH'
-//         },
-//         {
-//             'footprint': 3.8512,
-//             'goodness': 0.9275,
-//             'name': 'POTATOES BRUSHED'
-//         },
-//         {'footprint': 1.616, 'goodness': 0.95, 'name': 'BROCCOLI'},
-//         {
-//             'footprint': 1.2914,
-//             'goodness': 0.9724999999999999,
-//             'name': 'GRAPES GREEN'
-//         },
-//         {'footprint': 0.436, 'goodness': 0.95, 'name': 'PEAS SNOW'},
-//         {
-//             'footprint': 0.49500000000000005,
-//             'goodness': 0.9724999999999999,
-//             'name': 'TOMATOES GRAPE'
-//         },
-//         {'footprint': 1.08, 'goodness': 0.95, 'name': 'LETTUCE ICEBERG'}
-//     ],
-//     'total_carbon_footprint': 9.2558,
-//     'goodness': 0.5
-// }
-
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
 export default function LinksScreen(props) {
   const { navigate } = props.navigation;
   let serverReply = props.navigation.getParam('data', ''); 
+  console.log("this is the server reply: ", serverReply)
   if(serverReply == ''){
     serverReply = serverReply_1
   }else{
@@ -118,6 +47,17 @@ export default function LinksScreen(props) {
     return (
         <ScrollView>
         <View style={styles.Container}>
+            <TouchableHighlight
+                onPress={ () => {
+                    console.log("accepted summary"); 
+                    navigate('Settings');
+                }}
+                style={styles.submit}>
+                <Text style={styles.BoldText}>
+                        Accept
+                </Text>
+            </TouchableHighlight>
+        
             <CarbonBreakdownPieChart
                 breakdown={serverReply.breakdown}
                 width={0.9 * screenWidth}
@@ -148,6 +88,10 @@ export default function LinksScreen(props) {
         </ScrollView>
     );
 }
+
+LinksScreen.navigationOptions = {
+    title: 'Summary',
+};
 
 const styles = StyleSheet.create({
     container: {
@@ -204,5 +148,20 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         color: '#5f5f5f',
     },
+    submit:{
+        marginRight:40,
+        marginLeft:40,
+        marginTop:10,
+        paddingTop:20,
+        paddingBottom:20,
+        backgroundColor:'#68a0cf',
+        borderRadius:10,
+        borderWidth: 1,
+        borderColor: '#fff'
+  },
+  submitText:{
+      color:'#fff',
+      textAlign:'center',
+  }
 
 });
