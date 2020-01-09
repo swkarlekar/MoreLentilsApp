@@ -120,37 +120,33 @@ export default function LinksScreen(props) {
         <View style={styles.Container}>
             <CarbonBreakdownPieChart
                 breakdown={serverReply.breakdown}
-                width={screenWidth}
+                width={0.9 * screenWidth}
                 height={0.4 * screenHeight}
                 backgroundColor="transparent"
+                paddingLeft={0.07 * screenWidth}
+            />
+
+        <View style={styles.ReceiptItem}>
+            <View style={styles.TextSpan}>
+                <Text numberOfLines={1} style={styles.BoldText}>
+                    Carbon Footprint (kg of CO2-e)
+                </Text>
+            </View>
+            <View style={styles.rightJustified}>
+                <Text style={styles.BoldTextR}>
+                    {serverReply.total_carbon_footprint.toFixed(1)}
+                </Text>
+            </View>
+        </View>
+            <ItemizedCarbonReceipt
+                rowStyling = {styles.ReceiptItem}
+                itemized={serverReply.itemized}
+                fontSize={18}
+                lineHeight={18}
             />
         </View>
-            <View style={styles.ReceiptItem}>
-                <View style={styles.TextSpan}>
-                    <Text numberOfLines={1} style={styles.BoldText}>
-                        Carbon Footprint (kg of CO2-e)
-                    </Text>
-                </View>
-                <View style={styles.ReceiptItem}>
-                    <View style={styles.TextSpan}>
-                        <Text numberOfLines={1} style={styles.BoldText}>
-                            Carbon Footprint (kg of CO2-e)
-                        </Text>
-                    </View>
-                    <View style={styles.rightJustified}>
-                        <Text style={styles.BoldTextR}>
-                            {serverReply.total_carbon_footprint.toFixed(1)}
-                        </Text>
-                    </View>
-                </View>
-            </View>
-                <ItemizedCarbonReceipt
-                    itemized={serverReply.itemized}
-                    fontSize={18}
-                    lineHeight={18}
-                />
-            </ScrollView>
-        );
+        </ScrollView>
+    );
 }
 
 const styles = StyleSheet.create({

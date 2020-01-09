@@ -32,14 +32,30 @@ const formatCarbonFootprint = (data, completed) => {
             yValues[i] = m * (i - lastX) + lastY;
         }
     }
+    else {
+        yValues = yValues.slice(0, lastX + 1);
+    }
 
     return yValues;
 }
 
-const generateKeyPointsGenerator = (keypoints) => {
+const generateKeyPointsGenerator = (keypoints, currentOne) => {
     let decorator = ({ x, y, data }) => {
     return data.map((value, index) => 
         {
+            if (index === currentOne) {
+                return (
+                    <Circle
+                    key={ index }
+                    cx={ x(index) }
+                    cy={ y(value) }
+                    r={ 5 }
+                    stroke={ '#ff9d42' }
+                    fill={ 'white' }
+                    strokeWidth={3}
+                    />
+                );
+            }
             if (keypoints.includes(index)) {
                 return (
                     <Circle
@@ -70,8 +86,9 @@ export default class FootprintProgressChart extends Component {
         let data2 = formatCarbonFootprint(thisMonthCarbonFootprints, false);
         let data2KeyPoints = thisMonthCarbonFootprints.map((item) => item.date);
 
-        const Graph1Decorator = generateKeyPointsGenerator(data1KeyPoints);
-        const Graph2Decorator = generateKeyPointsGenerator(data2KeyPoints);
+        const Graph1Decorator = generateKeyPointsGenerator(data1KeyPoints, -1);
+        const Graph2Decorator = generateKeyPointsGenerator(data2KeyPoints,
+            this.props.currentOne);
 
         let globalMax = Math.max.apply(Math, data1.concat(data2));
 
@@ -97,6 +114,7 @@ export default class FootprintProgressChart extends Component {
                             svg={{ fill: 'rgba(160, 160, 160, 0.5)' }}
                             contentInset={ { top: 20, bottom: 20 } }
                             yMax = {globalMax}
+                            xMax = { 31 }
                         >
                             <Grid
                             numberOfTicks={5}/>
@@ -108,6 +126,7 @@ export default class FootprintProgressChart extends Component {
                             svg={{ fill: 'rgba(34, 128, 30, 0.5)' }}
                             contentInset={ { top: 20, bottom: 20 } }
                             yMax = { globalMax }
+                            xMax = { 31 }
                         >
                             <Graph2Decorator/>
                         </AreaChart>

@@ -10,8 +10,8 @@ const screenHeight = Dimensions.get("window").height;
 
 const getGreenToRed = (percent) => {
     console.log(percent);
-    let r = percent<50 ? 255 : Math.floor(255-(percent*2-100)*255/100);
-    let g = percent>50 ? 255 : Math.floor((percent*2)*255/100);
+    let r = percent<50 ? 160 : Math.floor(160-(percent*2-100)*160/100);
+    let g = percent>50 ? 160 : Math.floor((percent*2)*160/100);
     let rv= 'rgb('+r+','+g+',0)';
     console.log(rv);
     return rv;
@@ -38,7 +38,7 @@ const ReceiptList = styled.FlatList`
 export default class ItemizedCarbonReceipt extends Component {
     renderItem = ({item}) => {
         return (
-            <View style={styles.ReceiptItem}>
+            <View style={this.props.rowStyling}>
                 <View style={styles.TextSpan}>
                     <Text style={styles.Text}>
                         {toEnglishCase(item.name)}
@@ -74,15 +74,6 @@ export default class ItemizedCarbonReceipt extends Component {
 }
 
 const styles = StyleSheet.create({
-    ReceiptItem: {
-        height: 30,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        paddingLeft: 0.05 * screenWidth,
-        paddingRight: 0.05 * screenWidth,
-        color: '#5f5f5f',
-    },
     TextSpan: {
         flex: 5,
         flexDirection: 'row',
