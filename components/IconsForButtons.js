@@ -8,16 +8,17 @@ import Colors from '../constants/Colors';
 export default function IconsForButtons(props) {
 
 	const screenWidth = Dimensions.get("window").width;
-  const screenHeight = Dimensions.get("window").height;
-  console.log("horizontal padding", screenWidth*props.alignHorizontal)
+    const screenHeight = Dimensions.get("window").height;
+    console.log("horizontal padding", screenWidth*props.alignHorizontal)
 
   return (
     <Ionicons
       name={props.name}
-      size={60}
+      size={screenWidth / 7.}
       style={{ 
-        marginLeft: screenWidth * props.alignHorizontal,
-        marginTop: screenHeight * props.alignVertical,
+        position: 'absolute',
+        left: screenWidth * props.alignHorizontal,
+        top: screenHeight * props.alignVertical,
       }}
       color={props.focused ? Colors.tabIconSelected : Colors.tabIconDefault}
     />

@@ -17,9 +17,11 @@ import { Camera } from 'expo-camera';
 import * as FileSystem from 'expo-file-system';
 import * as ImageManipulator from 'expo-image-manipulator';
 import { NavigationScreenProps } from 'react-navigation';
-import LinksScreen from './LinksScreen';
 import IconsForButtons from '../components/IconsForButtons'; 
 
+//import { server_addr } from './LoadingScreen';
+
+const server_addr = "http://f46870c0.ngrok.io";
 
 
 const url = "https://api.ocr.space/parse/image"
@@ -133,7 +135,6 @@ const upload = async (file) => {
         }
     }
     console.log('items: ', items)
-    const server_addr = "http://d1ecb8f2.ngrok.io";
     const response = await fetch(server_addr + "/query_receipt",
         {
             method: 'POST',
@@ -210,13 +211,14 @@ export default function HomeScreen(props) {
                     console.log(error)
                   } 
               } 
-
             }}>
             <IconsForButtons name={ 
         Platform.OS === 'ios'
           ? `ios-camera`
            : 'md-camera'
-      } alignHorizontal = {0.45} alignVertical = {0.80} />
+      } 
+        styles={{}}
+      alignHorizontal = {3. / 7.} alignVertical = {0.80} />
           </TouchableOpacity>
         </View>
         <Spinner
