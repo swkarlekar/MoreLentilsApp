@@ -76,7 +76,7 @@ let mockLastMonthData = {"trips": {"c1a7f2a3-4e7b-4e23-bc4b-af53de6399ba": {"nex
 
 let mockTripId = "c1a7f2a3-4e7b-4e23-bc4b-af53de6399bb"
 
-const server_addr = "http://4307a77d.ngrok.io";
+const server_addr = "http://d1ecb8f2.ngrok.io";
 
 const swipeConfig = {
   velocityThreshold: 0.3,
