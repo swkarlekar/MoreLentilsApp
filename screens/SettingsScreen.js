@@ -33,7 +33,7 @@ const ios_scale = screenWidth / 380;
 const scaleTextSize = (size) => {
   const newSize = size * ios_scale 
   if (Platform.OS === 'ios') {
-    return Math.round(PixelRatio.roundToNearestPixel(newSize)) - 1
+    return Math.round(PixelRatio.roundToNearestPixel(newSize)) - 1.5
   } else {
     return Math.round(PixelRatio.roundToNearestPixel(newSize)) + 2
   }
@@ -308,7 +308,7 @@ export default class SettingsScreen extends Component {
 
                     <CarbonBreakdownPieChart
                             breakdown={this.state.tripSummary}
-                            width={0.9 * screenWidth}
+                            width={0.87 * screenWidth}
                             height={0.3 * screenHeight}
                             backgroundColor="transparent"
                             paddingLeft={0.05 * screenWidth}
