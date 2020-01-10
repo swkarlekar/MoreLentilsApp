@@ -11,6 +11,8 @@ import {
 import { NavigationScreenProps } from 'react-navigation';
 import GestureRecognizer, { swipeDirections } from 'react-native-swipe-gestures';
 
+import { fetchMonthData } from './LoadingScreen';
+import GLOBALS from '../globals';
 
 import CarbonBreakdownPieChart from '../components/CarbonBreakdownPieChart'
 import FootprintProgressChart from '../components/FootprintProgressChart'
@@ -138,38 +140,41 @@ const monthNameMapper = (m) => {
 export default class SettingsScreen extends Component {
     constructor(props) {
         super(props);
+
+        let mostRecentTripId = GLOBALS.curMonthData.last_trip;
+        let mostRecentTrip = GLOBALS.curMonthData.trips[mostRecentTripId];
+
         this.state = {
-            'tripSummary': mockTripSummary,
-            'year': 2019,
-            'month': 12,
-            'day': 3,
-            'itemized': mockItemizedReceipt,
-            'currentOne': -1,
-            'curMonthData': mockCurMonthData,
-            'lastMonthData': mockLastMonthData,
-            'curTripId': mockTripId,
-            'firstCall': true
+            'tripSummary': mostRecentTrip.breakdown_summary,
+            'year': mostRecentTrip.year,
+            'month': mostRecentTrip.month,
+            'day': mostRecentTrip.day,
+            'itemized': mostRecentTrip.parsed_receipt,
+            'currentOne': mostRecentTrip.day,
+            'curMonthData': GLOBALS.curMonthData,
+            'lastMonthData': GLOBALS.lastMonthData,
+            'curTripId': mostRecentTripId,
         }
     }
 
     async componentDidMount() {  
-        if (this.state.firstCall) {
-            let curMonthData = await this.fetchMonthData(this.state.year,
-                this.state.month);
-            this.state.curMonthData = curMonthData;
-            let lastMonthData = await this.fetchMonthData(this.state.year,
-                this.state.month - 1);
-            this.state.lastMonthData = lastMonthData;
-            this.state.curTripId = curMonthData.last_trip;
-            this.state.firstCall=false;
-            this.setState(this.state);
+        //if (this.state.firstCall) {
+        //    let curMonthData = await fetchMonthData(this.state.year,
+        //        this.state.month);
+        //    this.state.curMonthData = curMonthData;
+        //    let lastMonthData = await fetchMonthData(this.state.year,
+        //        this.state.month - 1);
+        //    this.state.lastMonthData = lastMonthData;
+        //    this.state.curTripId = curMonthData.last_trip;
+        //    this.state.firstCall=false;
+        //    this.setState(this.state);
 
-            this.updateToTripId(this.state.curTripId);
-        }
+        //    this.updateToTripId(this.state.curTripId);
+        //}
     }
 
     onSwipePerformed = (action) => {
-        console.log("action ", action);
+        //console.log("action ", action);
         switch (action) {
             case 'left':
                 this.showBreakdownFromLastTrip();
@@ -178,24 +183,6 @@ export default class SettingsScreen extends Component {
                 this.showBreakdownFromNextTrip();
                 break;
         }
-    }
-
-    fetchMonthData = async (year, month) => {
-        const response = await fetch(server_addr + "/query_month/",
-            {
-                method: 'POST',
-                mode: 'cors',
-                headers: new Headers({ 'Content-Type': 'application/json' }),
-                body: JSON.stringify({
-                    username: 'DevUser',
-                    year: year,
-                    month: month
-                })
-            });
-
-        let monthlyData = await response.json();
-
-        return monthlyData;
     }
 
     getFootprintGraphData = (tripData) => {
@@ -224,7 +211,7 @@ export default class SettingsScreen extends Component {
     updateToTripId = (tripId) => {
         let summary = this.state.curMonthData.trips[tripId];
 
-        console.log("summary", summary);
+        //console.log("summary", summary);
 
         this.state.tripSummary = summary.breakdown_summary;
         this.state.year = summary.year;

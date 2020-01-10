@@ -36,11 +36,10 @@ const screenHeight = Dimensions.get("window").height;
 export default function LinksScreen(props) {
   const { navigate } = props.navigation;
   let serverReply = props.navigation.getParam('data', ''); 
-  console.log("this is the server reply: ", serverReply)
   if(serverReply == ''){
     serverReply = serverReply_1
   }else{
-    serverReply = JSON.parse(serverReply)
+    serverReply = serverReply
   }
 
     return (
@@ -48,8 +47,7 @@ export default function LinksScreen(props) {
         <View style={styles.Container}>
             <TouchableHighlight
                 onPress={ () => {
-                    console.log("accepted summary"); 
-                    navigate('Settings');
+                    navigate('Settings', {});
                 }}
                 style={styles.submit}>
                 <Text style={styles.BoldText}>

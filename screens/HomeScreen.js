@@ -7,6 +7,7 @@ import {
   Platform,
   StyleSheet,
   Text,
+    Dimensions,
   TouchableOpacity,
   View,
   Alert
@@ -18,16 +19,18 @@ import * as FileSystem from 'expo-file-system';
 import * as ImageManipulator from 'expo-image-manipulator';
 import { NavigationScreenProps } from 'react-navigation';
 import IconsForButtons from '../components/IconsForButtons'; 
+import GLOBALS from '../globals';
 
 //import { server_addr } from './LoadingScreen';
 
 const server_addr = "http://f46870c0.ngrok.io";
 
+const screenHeight = Dimensions.get("window").height;
+const screenWidth = Dimensions.get("window").width;
 
 const url = "https://api.ocr.space/parse/image"
 async function apiCall(path, file) {
   try{
-    console.log("apiCall", path);
     let formData = new FormData();
     const manipResult = await ImageManipulator.manipulateAsync(
           file["uri"],
@@ -52,13 +55,11 @@ async function apiCall(path, file) {
         body: formData
     })
     if (!response.ok) {
-        console.log(response.json())
         throw await response.json()
     }
     return await response.json()
   }
   catch (error) {
-    console.log(error)
   } 
     
 }
@@ -66,7 +67,9 @@ async function apiCall(path, file) {
 // This will upload the file after having read it
 const upload = async (file) => {
   try{
+    console.log("MakingAPI call!")
     const resp = await apiCall("", file)
+    console.log(resp);
     const lines = resp.ParsedResults[0].TextOverlay.Lines
     var r = /^\$?[0-9]+[.,][0-9]?[0-9]?$/;
     const rowY = []
@@ -134,7 +137,6 @@ const upload = async (file) => {
             items.push({name, quantity: 1.0, unit: 'ea'})
         }
     }
-    console.log('items: ', items)
     const response = await fetch(server_addr + "/query_receipt",
         {
             method: 'POST',
@@ -149,7 +151,6 @@ const upload = async (file) => {
     return await response.json(); 
   }
   catch(error){
-    console.log(error)
   }
     
 };
@@ -160,7 +161,6 @@ export default function HomeScreen(props) {
   const [hasPermission, setHasPermission] = useState(null);
   const [showSpinner, setSpinner] = useState(false);
   const [type, setType] = useState(Camera.Constants.Type.back);
-  const showCamera = !showSpinner; 
 
   useEffect(() => {
     (async () => {
@@ -190,38 +190,41 @@ export default function HomeScreen(props) {
             flexDirection: 'row',
           }}>
           { (!showSpinner) &&
-          <TouchableOpacity
-          style={{ 
-            visible: showCamera
-          }}
-            onPress={ async () => {
-              setSpinner(true)
-              if (camera.current) {
-                 try {
-                    const photo = await camera.current.takePictureAsync();
-                    var file = {
-                        uri: photo['uri'],
-                        type: 'image/jpg',
-                        name: 'photo.jpg',
-                    };
-                    const parsedReceipt = await upload(file);
-                    console.log(parsedReceipt);
-                    setSpinner(false)
-                    navigate('Links', {data: JSON.stringify(parsedReceipt)})
-                  } catch (error) {
-                    console.log(error)
-                  } 
-              } 
-            }}>
-            <IconsForButtons name={ 
-        Platform.OS === 'ios'
-          ? `ios-camera`
-           : 'md-camera'
-      } 
-        styles={{}}
-      alignHorizontal = {3. / 7.} alignVertical = {0.80} />
-          </TouchableOpacity>
-        }
+              <IconsForButtons
+                  onPress={
+                      async () => {
+                          console.log("Took photo");
+                          setSpinner(true)
+                          if (camera.current) {
+                              try {
+                                  const photo = await camera.current.takePictureAsync();
+                                  var file = {
+                                      uri: photo['uri'],
+                                      type: 'image/jpg',
+                                      name: 'photo.jpg',
+                                  };
+                                  const parsedReceipt = await upload(file);
+                                  console.log(parsedReceipt);
+                                  setSpinner(false)
+                                  navigate('Links', {
+                                      data: parsedReceipt,
+                                  })
+                              } catch (error) {
+                                  console.log(error);
+                              } 
+                          } 
+                      }
+                  }
+                  name={ 
+                      Platform.OS === 'ios'
+                      ? `ios-camera`
+                      : 'md-camera'
+                  }
+                  alignHorizontal = {3. / 7.}
+                  alignVertical = {0.80}
+                  widthPercentage = {1. / 7.}
+              />
+         }
         </View>
         <Spinner
           visible={showSpinner}

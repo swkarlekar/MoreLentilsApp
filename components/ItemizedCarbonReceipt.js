@@ -9,11 +9,9 @@ const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
 const getGreenToRed = (percent) => {
-    console.log(percent);
     let r = percent<50 ? 160 : Math.floor(160-(percent*2-100)*160/100);
     let g = percent>50 ? 160 : Math.floor((percent*2)*160/100);
     let rv= 'rgb('+r+','+g+',0)';
-    console.log(rv);
     return rv;
 };
 

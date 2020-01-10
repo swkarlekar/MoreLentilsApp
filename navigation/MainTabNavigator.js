@@ -57,7 +57,7 @@ SettingsStack.path = '';
 const tabNavigator = createBottomTabNavigator({
   HomeStack,
   SettingsStack,
-  });
+});
 
 tabNavigator.path = '';
 
