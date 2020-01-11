@@ -16,7 +16,7 @@ import { NavigationScreenProps } from 'react-navigation';
 
 import GLOBALS from '../globals';
 
-export const server_addr = "http://2ecd5bff.ngrok.io";
+export const server_addr = "http://b9ece01c.ngrok.io";
 
 export const screenHeight = Dimensions.get("window").height;
 export const screenWidth = Dimensions.get("window").width;
