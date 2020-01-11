@@ -25,10 +25,11 @@ const color_mapper = {
     'red meat': '#ffb5bc',
     'poultry': '#ff996d',
     'diary': '#f4e59a',
+    'grains': '#6f7f93',
     'fish': '#b6afd8',
     'lentils': '#a6d2fc',
     'tofu': '#fcf9e3',
-    'eggs': '#e0e0e0'
+    'eggs': '#e0e0e0',
 };
 
 const chartConfig = {
