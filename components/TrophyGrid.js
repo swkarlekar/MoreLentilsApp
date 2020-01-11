@@ -16,9 +16,7 @@ import TrophiesMasterList from './TrophiesList.js'
 
 function TrophyIcon({id, title, description, imageIcon, focused, icon_color, funcOnPressed, funcChangeTitle, funcChangeDescrip}) {  
   const screenWidth = Dimensions.get("window").width;
-  const screenHeight = Dimensions.get("window").height;
-  console.log('this is the color that icon should be: ', icon_color)
-    
+  const screenHeight = Dimensions.get("window").height;    
 
   return (
     <Tooltip popover={<Text>{title}</Text>}>
@@ -36,7 +34,6 @@ function TrophyIcon({id, title, description, imageIcon, focused, icon_color, fun
 
 export default function TrophyGrid(props) {
   const userTrophies = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, ]//props.userTrophies 
-  console.log(TrophiesMasterList)
   const [showPopup, setPopup] = useState(false);
   const [showTitle, setTitle] = useState(""); 
   const [showDescrip, setDescrip] = useState("");
