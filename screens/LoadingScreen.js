@@ -75,7 +75,7 @@ export default function LoadingScreen(props) {
     nextMonthData.then((data) => {
         GLOBALS.nextMonthData = data;
         console.log(GLOBALS.nextMonthData);
-        navigate('Links', {});
+        navigate('Main', {});
     });
 
     return (

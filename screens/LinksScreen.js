@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import {
-    ScrollView, StyleSheet, FlatList, Text, View, Dimensions, TouchableOpacity, TouchableHighlight 
+    ScrollView, StyleSheet, FlatList, Text, View, Dimensions, TouchableOpacity, TouchableHighlight, Button
 } from 'react-native';
 import { PieChart } from 'react-native-chart-kit';
 import { NavigationScreenProps } from 'react-navigation';
 import CarbonBreakdownPieChart from '../components/CarbonBreakdownPieChart'
 import ItemizedCarbonReceipt from '../components/ItemizedCarbonReceipt'
-import { Card, Divider, Button } from 'react-native-elements';
+import { Card, Divider } from 'react-native-elements';
 
 import { scaleTextSize } from './SettingsScreen';
 
@@ -37,13 +37,13 @@ const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
 export default function LinksScreen(props) {
-  const { navigate } = props.navigation;
-  let serverReply = props.navigation.getParam('data', ''); 
-  if(serverReply == ''){
-    serverReply = serverReply_1
-  }else{
-    serverReply = serverReply
-  }
+    const { navigate } = props.navigation;
+    let serverReply = props.navigation.getParam('data', ''); 
+    if (serverReply == '') {
+        serverReply = serverReply_1
+    } else {
+        serverReply = serverReply
+    }
 
     return (
         <View style={{
@@ -69,10 +69,19 @@ export default function LinksScreen(props) {
         
             <CarbonBreakdownPieChart
                 breakdown={serverReply.breakdown}
-                width={0.75 * screenWidth}
-                height={0.3 * screenHeight}
+                width={
+                    Platform.OS === 'ios'
+                    ? 0.75 * screenWidth
+                    : 0.75 * screenWidth}
+                height={
+                    Platform.OS === 'ios'
+                    ? 0.2 * screenHeight
+                    : 0.3 * screenHeight}
                 backgroundColor="transparent"
-                paddingLeft={0.04 * screenWidth}
+                paddingLeft={
+                    Platform.OS === 'ios'
+                    ? 0.01 * screenWidth
+                    : 0.04 * screenWidth}
             />
 
         <View style={styles.ReceiptItem}>
@@ -96,6 +105,7 @@ export default function LinksScreen(props) {
         </View>
         </ScrollView>
         </Card>
+
         <View style={{
             padding: 10,
             paddingTop: 10,
@@ -103,28 +113,30 @@ export default function LinksScreen(props) {
             flexDirection: 'row',
             justifyContent: 'center'
         }}>
-            <Button
-                onPress={ () => { navigate('PostLoading', {}); }}
-                containerStyle={{
-                    marginRight: 0.01 * screenWidth,
-                    flex: 1,
-                }}
-                buttonStyle={{
-                    padding: 20,
-                    backgroundColor: '#e26c6c'
-                }}
-                title='Retake Photo'/>
-            <Button
-                onPress={ () => { navigate('Settings', {}); }}
-                containerStyle={{
-                    marginLeft: 0.01 * screenWidth,
-                    flex: 1,
-                }}
-                buttonStyle={{
-                    padding: 20,
-                    backgroundColor: '#39DBAA'
-                }}
-                title='Accept'/>
+            <View style={{
+                marginRight: 0.01 * screenWidth, flex: 1, height: 50
+            }}>
+                <Button
+                    onPress={ () => { navigate('PostLoading', {}); }}
+                    style={{
+                        padding: 20,
+                        backgroundColor: '#e26c6c',
+                    }}
+                    title='Retake Photo'/>
+            </View>
+            <View style={{
+                marginLeft: 0.01 * screenWidth, flex: 1, height: 50
+            }} >
+                <Button
+                    onPress={ () => { navigate('Settings', {
+                        'serverReply': serverReply
+                    }); }}
+                    style={{
+                        padding: 20,
+                        backgroundColor: '#39DBAA',
+                    }}
+                    title='Accept'/>
+            </View>
         </View>
 
         </View>

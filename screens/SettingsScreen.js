@@ -104,12 +104,56 @@ export default class SettingsScreen extends Component {
     constructor(props) {
         super(props);
 
+        console.log("Settings screen being constructed");
+
+        let serverReply = props.navigation.getParam('serverReply', null)
+        // FIXME i dont think this is how the react lifecycle works considering
+        // you could have just been refocused to this screen rather than
+        // constructing it from scratch
+        console.log(serverReply);
+
         let mostRecentTripId = GLOBALS.curMonthData.last_trip;
         let mostRecentTrip = GLOBALS.curMonthData.trips[mostRecentTripId];
 
+        let today = new Date();
+        let cur_year = today.getFullYear();
+        let cur_month = today.getMonth() + 1;
+        let cur_day = today.getDate();
+
+        let copiedEmpty = null;
+
+        if (serverReply != null) {
+            // then we know that we just came from link screen
+            if (serverReply.month == cur_month) {
+                // just append the most recent scan to this month's data, and
+                // move right
+                // FIXME TODO impl this logic, rn it just crashes LOL
+            }
+            else {
+                // we "moveRight" but the new month is just the new data point
+                copiedEmpty = Object.assign({}, GLOBALS.nextMonthData);
+
+                GLOBALS.nextMonthData.first_trip = serverReply.trip_id;
+                GLOBALS.nextMonthData.last_trip = serverReply.trip_id;
+                let newObj = {
+                    'id': serverReply.trip_id, 
+                    'parsed_receipt': serverReply.itemized,
+                    'breakdown_summary': serverReply.breakdown,
+                    'carbon_footprint': serverReply.total_carbon_footprint,
+                    'day': cur_day,
+                    'month': cur_month,
+                    'year': cur_year,
+                    'last_id': null,
+                    'next_id': null
+                }
+
+                GLOBALS.nextMonthData.trips[serverReply.trip_id] = newObj;
+            }
+        }
+
         this.state = {
-            'curYear': (new Date().getFullYear()),
-            'curMonth': (new Date().getMonth()),
+            'curYear': cur_year,
+            'curMonth': cur_month,
             'tripSummary': mostRecentTrip.breakdown_summary,
             'year': mostRecentTrip.year,
             'month': mostRecentTrip.month,
@@ -127,8 +171,6 @@ export default class SettingsScreen extends Component {
         let [ tY, tm ] = getLastMonth(y, m);
         [tY, tm] = getLastMonth(tY, tm);
 
-        //console.log((ty, tm));
-
         this.state.prefetchingPrev = fetchMonthData(tY, tm);
 
         [ tY, tm ] = getNextMonth(getNextMonth(y, m));
@@ -138,6 +180,37 @@ export default class SettingsScreen extends Component {
         this.state.nextTwoPrefetching = null;
         if (this.state.nextMonthData.last_trip != null) {
             this.state.nextTwoPrefetching = fetchMonthData(tY, tm);
+        }
+
+        // FIXME rewrite this later... this logic is very broken
+        if (serverReply != null) {
+            console.log("MOVING RIGHT");
+            this.state.prefetchingPrev = Promise.resolve(this.state.lastMonthData);
+            this.state.lastMonthData = this.state.curMonthData;
+            this.state.curMonthData = this.state.nextMonthData;
+            this.state.nextMonthData = copiedEmpty;
+
+            let y = this.state.nextMonthData.year;
+            let m = this.state.nextMonthData.month;
+
+            let [ tY, tm ] = getNextMonth(y, m);
+            this.state.nextTwoPrefetching = fetchMonthData(tY, tm);
+
+            this.state.curTripId = this.state.curMonthData.first_trip;
+
+            let summary = this.state.curMonthData.trips[serverReply.trip_id];
+
+            this.state.tripSummary = summary.breakdown_summary;
+            this.state.year = summary.year;
+            this.state.month = summary.month;
+            this.state.day = summary.day;
+            this.state.itemized = summary.parsed_receipt;
+
+            this.state.currentOne = summary.day;
+
+            console.log(this.state.curMonthData);
+            console.log(this.state.curMonthData.trips);
+            console.log("DONE MOVING RIGHT");
         }
     }
 
@@ -188,8 +261,6 @@ export default class SettingsScreen extends Component {
     updateToTripId = (tripId) => {
         let summary = this.state.curMonthData.trips[tripId];
         console.log(summary);
-
-        //console.log("summary", summary);
 
         this.state.tripSummary = summary.breakdown_summary;
         this.state.year = summary.year;
@@ -419,8 +490,6 @@ const styles = StyleSheet.create({
     Container: {
         flex: 1,
         marginTop: 0.01 * screenHeight,
-        //paddingLeft : 0.02 * screenWidth,
-        //paddingRight: 0.02 * screenWidth,
     },
     ReceiptItem: {
         height: 30,

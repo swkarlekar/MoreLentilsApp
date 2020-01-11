@@ -28,7 +28,7 @@ const color_mapper = {
     'fish': '#b6afd8',
     'lentils': '#a6d2fc',
     'tofu': '#fcf9e3',
-    'grains': '#e0e0e0'
+    'eggs': '#e0e0e0'
 };
 
 const chartConfig = {
