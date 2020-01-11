@@ -9,6 +9,8 @@ import TabBarIcon from '../components/TabBarIcon';
 import HomeScreen from '../screens/HomeScreen';
 import LinksScreen from '../screens/LinksScreen';
 import SettingsScreen from '../screens/SettingsScreen';
+import TrophiesScreen from '../screens/TrophiesScreen';
+
 
 const config = Platform.select({
   web: { headerMode: 'screen' },
@@ -54,10 +56,27 @@ SettingsStack.navigationOptions = {
 
 SettingsStack.path = '';
 
+const TrophiesStack = createStackNavigator(
+  {
+    Trophies: TrophiesScreen,
+  },
+  config
+);
+
+TrophiesStack.navigationOptions = {
+  tabBarLabel: 'Trophies',
+  tabBarIcon: ({ focused }) => (
+    <TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-trophy' : 'md-trophy'} />
+  ),
+};
+
+TrophiesStack.path = '';
+
 const tabNavigator = createBottomTabNavigator({
   HomeStack,
   SettingsStack,
-});
+  TrophiesStack
+  });
 
 tabNavigator.path = '';
 
