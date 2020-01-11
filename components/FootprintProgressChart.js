@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Dimensions } from 'react-native';
 
-import { Dimensions } from 'react-native';
 import { YAxis, LineChart, AreaChart, Grid } from 'react-native-svg-charts'
 import { Circle, Path } from 'react-native-svg'
+
+const screenHeight = Dimensions.get("window").height;
+const screenWidth = Dimensions.get("window").width;
 
 // complex linear algebra to interpolate a few key points into a smooth line
 // over the period of 31 days
@@ -83,7 +85,8 @@ export default class FootprintProgressChart extends Component {
 
         let data1 = formatCarbonFootprint(lastMonthCarbonFootprints, true);
         let data1KeyPoints = lastMonthCarbonFootprints.map((item) => item.date);
-        let data2 = formatCarbonFootprint(thisMonthCarbonFootprints, false);
+        let data2 = formatCarbonFootprint(thisMonthCarbonFootprints,
+            this.props.hasCompleted);
         let data2KeyPoints = thisMonthCarbonFootprints.map((item) => item.date);
 
         const Graph1Decorator = generateKeyPointsGenerator(data1KeyPoints, -1);
@@ -95,10 +98,10 @@ export default class FootprintProgressChart extends Component {
         return (
             <View>
                 <Text>CO2-e (kg)</Text>
-                <View style={ { height: 200 , flexDirection: 'row'} }>
+                <View style={ { height: 0.25 * screenHeight, flexDirection: 'row'} }>
                     <YAxis
                         style = {{flex: 1}}
-                        data={data1}
+                        data={data1.concat(data2)}
                         contentInset={ {top: 20, bottom: 20 } }
                         svg={{
                             fill: 'grey',

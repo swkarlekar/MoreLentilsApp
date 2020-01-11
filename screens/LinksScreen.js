@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
 import {
-    ScrollView, StyleSheet, FlatList, Text, View, Dimensions, TouchableOpacity, TouchableHighlight, Button
+    ScrollView, StyleSheet, FlatList, Text, View, Dimensions, TouchableOpacity, TouchableHighlight 
 } from 'react-native';
 import { PieChart } from 'react-native-chart-kit';
 import { NavigationScreenProps } from 'react-navigation';
 import CarbonBreakdownPieChart from '../components/CarbonBreakdownPieChart'
 import ItemizedCarbonReceipt from '../components/ItemizedCarbonReceipt'
+import { Card, Divider, Button } from 'react-native-elements';
+
+import { scaleTextSize } from './SettingsScreen';
 
 
 const toEnglishCase = (str) => {
@@ -43,46 +46,88 @@ export default function LinksScreen(props) {
   }
 
     return (
+        <View style={{
+            paddingTop: 0.07 * screenHeight,
+            paddingLeft: 0.05 * screenWidth,
+            paddingRight: 0.05 * screenWidth
+        }}>
+        <Text style={styles.BoldText}>
+            Carbon Footprint Breakdown:
+        </Text>
+        <Text style={{
+            textAlign: 'center',
+            fontSize: scaleTextSize(30),
+            paddingTop: 0.02 * screenHeight,
+            fontStyle: 'normal',
+            color: '#5f5f5f'
+        }}>
+            {serverReply.total_carbon_footprint.toFixed(1)} kg of CO2-e
+        </Text>
+        <Card>
         <ScrollView>
         <View style={styles.Container}>
-            <TouchableHighlight
-                onPress={ () => {
-                    navigate('Settings', {});
-                }}
-                style={styles.submit}>
-                <Text style={styles.BoldText}>
-                        Accept
-                </Text>
-            </TouchableHighlight>
         
             <CarbonBreakdownPieChart
                 breakdown={serverReply.breakdown}
-                width={0.9 * screenWidth}
-                height={0.4 * screenHeight}
+                width={0.75 * screenWidth}
+                height={0.3 * screenHeight}
                 backgroundColor="transparent"
-                paddingLeft={0.07 * screenWidth}
+                paddingLeft={0.04 * screenWidth}
             />
 
         <View style={styles.ReceiptItem}>
             <View style={styles.TextSpan}>
                 <Text numberOfLines={1} style={styles.BoldText}>
-                    Carbon Footprint (kg of CO2-e)
+                    Itemized
                 </Text>
             </View>
             <View style={styles.rightJustified}>
                 <Text style={styles.BoldTextR}>
-                    {serverReply.total_carbon_footprint.toFixed(1)}
+                    CO2-e (kg)
                 </Text>
             </View>
         </View>
             <ItemizedCarbonReceipt
                 rowStyling = {styles.ReceiptItem}
                 itemized={serverReply.itemized}
-                fontSize={18}
-                lineHeight={18}
+                fontSize={scaleTextSize(16)}
+                lineHeight={scaleTextSize(16)}
             />
         </View>
         </ScrollView>
+        </Card>
+        <View style={{
+            padding: 10,
+            paddingTop: 10,
+            flex: 1,
+            flexDirection: 'row',
+            justifyContent: 'center'
+        }}>
+            <Button
+                onPress={ () => { navigate('PostLoading', {}); }}
+                containerStyle={{
+                    marginRight: 0.01 * screenWidth,
+                    flex: 1,
+                }}
+                buttonStyle={{
+                    padding: 20,
+                    backgroundColor: '#e26c6c'
+                }}
+                title='Retake Photo'/>
+            <Button
+                onPress={ () => { navigate('Settings', {}); }}
+                containerStyle={{
+                    marginLeft: 0.01 * screenWidth,
+                    flex: 1,
+                }}
+                buttonStyle={{
+                    padding: 20,
+                    backgroundColor: '#39DBAA'
+                }}
+                title='Accept'/>
+        </View>
+
+        </View>
     );
 }
 
@@ -99,33 +144,27 @@ const styles = StyleSheet.create({
     BoldText: {
         fontStyle: 'normal',
         fontWeight: 'bold',
-        fontSize: 20,
-        lineHeight: 20,
+        fontSize: scaleTextSize(18),
+        lineHeight: scaleTextSize(18),
         color: '#5f5f5f',
     },
     BoldTextR: {
         textAlign: 'right',
         fontStyle: 'normal',
         fontWeight: 'bold',
-        fontSize: 20,
-        lineHeight: 20,
+        fontSize: scaleTextSize(18),
+        lineHeight: scaleTextSize(18),
         color: '#5f5f5f',
-    },
-    Container : {
-        paddingLeft: 0.05 * screenWidth,
-        paddingRight: 0.05 * screenHeight,
     },
     ReceiptItem: {
         height: 30,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingLeft: 0.05 * screenWidth,
-        paddingRight: 0.05 * screenWidth,
         color: '#5f5f5f',
     },
     TextSpan: {
-        flex: 5,
+        flex: 1,
         flexDirection: 'row',
         justifyContent: 'flex-start',
         color: '#5f5f5f',
@@ -134,8 +173,8 @@ const styles = StyleSheet.create({
         flex: 1,
         fontStyle: 'normal',
         fontWeight: 'normal',
-        fontSize: 18,
-        lineHeight: 18,
+        fontSize: scaleTextSize(16),
+        lineHeight: scaleTextSize(16),
         color: '#5f5f5f',
     },
     rightJustified: {

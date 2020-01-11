@@ -21,9 +21,7 @@ import { NavigationScreenProps } from 'react-navigation';
 import IconsForButtons from '../components/IconsForButtons'; 
 import GLOBALS from '../globals';
 
-//import { server_addr } from './LoadingScreen';
-
-const server_addr = "http://f46870c0.ngrok.io";
+import { server_addr } from './LoadingScreen';
 
 const screenHeight = Dimensions.get("window").height;
 const screenWidth = Dimensions.get("window").width;
@@ -204,7 +202,7 @@ export default function HomeScreen(props) {
                                       name: 'photo.jpg',
                                   };
                                   const parsedReceipt = await upload(file);
-                                  console.log(parsedReceipt);
+                                  console.log("Parsed Receipt", parsedReceipt);
                                   setSpinner(false)
                                   navigate('Links', {
                                       data: parsedReceipt,

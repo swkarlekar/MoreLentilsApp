@@ -38,7 +38,14 @@ export default class ItemizedCarbonReceipt extends Component {
         return (
             <View style={this.props.rowStyling}>
                 <View style={styles.TextSpan}>
-                    <Text style={styles.Text}>
+                    <Text style={{
+                        flex: 1,
+                        fontStyle: 'normal',
+                        fontWeight: 'normal',
+                        fontSize: this.props.fontSize,
+                        lineHeight: this.props.fontSize,
+                        color: '#5f5f5f',
+                    }}>
                         {toEnglishCase(item.name)}
                     </Text>
                 </View>
